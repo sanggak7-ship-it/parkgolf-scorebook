@@ -95,6 +95,26 @@ html.night .icon-btn .i-sun{display:block}
 .howto li::marker{font-family:var(--f-num);font-weight:700;color:var(--accent)}
 .btn.kakao{background:#FEE500;color:#191600;box-shadow:0 10px 22px -12px rgba(120,100,0,.6)}
 .btn.big{min-height:3.5rem;font-size:1.125rem}
+.qr-card{display:grid;gap:.875rem}
+.qr-head{display:flex;gap:.75rem;align-items:center}
+.qr-head>div{min-width:0}
+.qr-head b{display:block;font-weight:800;font-size:1rem}
+.qr-head span{display:block;font-size:.8125rem;color:var(--ink-2)}
+.qr-box{background:#FFFFFF;border-radius:var(--r);padding:.5rem;display:grid;place-items:center;border:1px solid var(--hair)}
+.qr-box canvas{width:min(18rem,100%);height:auto;image-rendering:pixelated;display:block}
+.scan-box{position:relative;width:100%;max-width:20rem;aspect-ratio:1;justify-self:center;border-radius:var(--r);overflow:hidden;background:#000}
+.scan-box video{width:100%;height:100%;object-fit:cover;display:block}
+.scan-frame{position:absolute;inset:14%;border:3px solid rgba(255,255,255,.95);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.center{text-align:center}
+.bad{color:var(--over)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.merge-from{display:grid;gap:.125rem;padding:.75rem .875rem;border-radius:var(--r-sm);background:var(--accent-soft)}
+.merge-from b{font-size:1.0625rem;font-weight:800}
+.merge-from span:last-child{font-size:.875rem;color:var(--ink-2)}
+.merge-list{display:grid;gap:.375rem;margin:0;padding:0;list-style:none}
+.merge-list li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.625rem .875rem;border-radius:var(--r-sm);background:var(--surface-2)}
+.merge-list b{font-weight:800;text-align:right}
+.cf-row{display:grid;gap:.375rem;padding-top:.625rem;border-top:1px solid var(--hair)}
 .top-meta{font-size:.75rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill-btn{min-height:2.25rem;padding:0 .875rem;border-radius:999px;border:0;background:var(--surface-2);font-weight:700;font-size:.8125rem;white-space:nowrap;color:var(--ink-2)}
 .pill-btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -406,6 +426,17 @@ tfoot .num{font-size:1.375rem;font-weight:700}
       <div id="mini" class="live"></div>
     </div>
 
+    <div class="card qr-card">
+      <div class="qr-head">
+        <span class="sum-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></span>
+        <div><b>조원과 점수 합치기</b><span>각자 휴대폰에 입력한 점수를 QR 한 번으로 모아요</span></div>
+      </div>
+      <div class="btn-grid">
+        <button class="btn" type="button" data-qr="show">내 QR 보여주기</button>
+        <button class="btn pri" type="button" data-qr="scan">QR 찍어서 합치기</button>
+      </div>
+    </div>
+
     <details id="setup" class="card setup">
       <summary>
         <span class="sum-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>
@@ -488,7 +519,8 @@ tfoot .num{font-size:1.375rem;font-weight:700}
       <div class="field"><label class="label" for="fNote">참고 메모</label><textarea id="fNote" class="inp" placeholder="날씨, 내기, 특이사항 등"></textarea></div>
       <div class="btn-grid">
         <button id="shareBtn" class="btn kakao big full" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>결과 사진 보내기 (카톡)</button>
-        <button id="saveBtn" class="btn pri full" type="button">기록 저장</button>
+        <button id="saveBtn" class="btn pri" type="button">기록 저장</button>
+        <button class="btn" type="button" data-qr="scan">QR로 점수 합치기</button>
         <button id="newBtn" class="btn warn full" type="button">새 경기 시작</button>
       </div>
     </div>
@@ -588,6 +620,27 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     <div class="row between"><h3>홈 화면에 파크노트 추가</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
     <p class="muted">한 번 추가해 두면 앱처럼 아이콘을 눌러 바로 열 수 있어요.</p>
     <ol id="howto" class="howto"></ol>
+  </div>
+</div>
+<div id="qrSheet" class="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="QR로 점수 합치기">
+    <span class="grab" aria-hidden="true"></span>
+    <div class="row between"><h3 id="qrTitle">내 점수 QR</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
+    <div id="qrShow" class="stack">
+      <div class="qr-box"><canvas id="qrCanvas" width="10" height="10" aria-label="내 점수 QR 코드"></canvas></div>
+      <p id="qrInfo" class="center muted"></p>
+      <p class="small muted">조원이 파크노트에서 <b>QR 찍어서 합치기</b>를 누르고 이 화면을 찍으면 점수가 합쳐져요. 화면 밝기를 올리면 더 잘 찍혀요.</p>
+    </div>
+    <div id="qrScan" class="stack" hidden>
+      <div class="scan-box"><video id="qrVideo" playsinline muted></video><i class="scan-frame" aria-hidden="true"></i></div>
+      <p id="qrStatus" class="center muted" role="status"></p>
+      <label class="btn wide" for="qrFile">QR 사진으로 불러오기</label>
+      <input id="qrFile" class="sr-only" type="file" accept="image/*">
+    </div>
+    <div id="qrMerge" class="stack" hidden>
+      <div id="qrPlan" class="stack"></div>
+      <button id="qrApply" class="btn pri big wide" type="button">합치기</button>
+    </div>
   </div>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -1212,9 +1265,9 @@ $('#shareTxtBtn').addEventListener('click', function(){
 /* generic bottom sheets */
 function openSheet(id){ var s = $(id); s.hidden = false; var f = s.querySelector('[data-close]'); if (f) f.focus({ preventScroll:true }); }
 $$('.sheet').forEach(function(s){
-  s.addEventListener('click', function(e){ if (e.target === s || e.target.closest('[data-close]')) s.hidden = true; });
+  s.addEventListener('click', function(e){ if (e.target === s || e.target.closest('[data-close]')){ s.hidden = true; if (s.id === 'qrSheet') stopScan(); } });
 });
-document.addEventListener('keydown', function(e){ if (e.key === 'Escape') $$('.sheet').forEach(function(s){ s.hidden = true; }); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ $$('.sheet').forEach(function(s){ s.hidden = true; }); stopScan(); } });
 
 /* home-screen shortcut */
 var installEvt = null;
@@ -1245,6 +1298,219 @@ function tickClock(){
   $('#clockDate').textContent = fmtDate(ymd(d));
   $('#clockTime').textContent = (h < 12 ? '오전 ' : '오후 ') + (h % 12 || 12) + ':' + pad(m);
 }
+
+/* ---------- QR: share this phone's round, or scan a group member's QR and merge ---------- */
+var QR_PREFIX = 'PN1.', SC = '-123456789abcdef', LIB_QR = 'vendor/qrcode.js', LIB_JSQR = 'vendor/jsQR.js';
+var libs = {};
+function need(src, globalName){
+  if (window[globalName]) return Promise.resolve();
+  if (!libs[src]) libs[src] = new Promise(function(res, rej){ var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = function(){ delete libs[src]; rej(new Error('load')); }; document.head.appendChild(s); });
+  return libs[src];
+}
+function b64urlEncode(str){ var bytes = new TextEncoder().encode(str), bin = ''; for (var i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64urlDecode(s){ s = s.replace(/-/g,'+').replace(/_/g,'/'); while (s.length % 4) s += '='; var bin = atob(s), a = new Uint8Array(bin.length); for (var i=0;i<bin.length;i++) a[i] = bin.charCodeAt(i); return new TextDecoder().decode(a); }
+function clean(s){ return String(s || '').replace(/[|~]/g, ' ').trim(); }
+// compact, ASCII-only payload so every scanner reads it the same way
+function encodeRound(r){
+  var cn = [], pars = '', nm = [], sc = '', ob = '', c, p, h;
+  for (c=0;c<r.nC;c++){ cn.push(clean(r.courses[c].name)); pars += r.courses[c].pars.join(''); }
+  for (p=0;p<r.nP;p++) nm.push(clean(r.players[p].name));
+  for (c=0;c<r.nC;c++) for (p=0;p<r.nP;p++) for (h=0;h<HOLES;h++){
+    var s = r.scores[c][p][h]; sc += s == null ? '-' : SC.charAt(Math.max(1, Math.min(15, s)));
+    if (r.ob[c][p][h]) ob += '' + c + p + h;
+  }
+  return QR_PREFIX + b64urlEncode(['PN1', r.date.replace(/-/g,''), clean(r.venue), clean(r.group), r.nP, r.nC, cn.join('~'), pars, nm.join('~'), sc, ob].join('|'));
+}
+function decodeRound(text){
+  text = String(text || '').trim(); var at = text.indexOf(QR_PREFIX); if (at < 0) return null;
+  try {
+    var f = b64urlDecode(text.slice(at + QR_PREFIX.length)).split('|');
+    if (f.length < 11 || f[0] !== 'PN1') return null;
+    var nP = +f[4], nC = +f[5], c, p, h, k = 0;
+    if (!(nP >= 1 && nP <= MAXP && nC >= 1 && nC <= MAXC) || f[7].length !== nC * HOLES || f[9].length !== nC * nP * HOLES || !/^\d{8}$/.test(f[1])) return null;
+    var r = makeRound(), cn = f[6].split('~'), nm = f[8].split('~');
+    r.date = f[1].slice(0,4) + '-' + f[1].slice(4,6) + '-' + f[1].slice(6,8); r.venue = f[2]; r.group = f[3]; r.nP = nP; r.nC = nC;
+    for (c=0;c<nC;c++){ r.courses[c].name = cn[c] || LETTERS[c]; for (h=0;h<HOLES;h++){ var pv = +f[7].charAt(c*HOLES + h); r.courses[c].pars[h] = pv >= 2 && pv <= 9 ? pv : 4; } }
+    for (p=0;p<nP;p++) r.players[p].name = nm[p] || '';
+    for (c=0;c<nC;c++) for (p=0;p<nP;p++) for (h=0;h<HOLES;h++){ var i = SC.indexOf(f[9].charAt(k++)); r.scores[c][p][h] = i >= 1 ? i : null; }
+    for (var j=0;j+2<f[10].length;j+=3){ c = +f[10][j]; p = +f[10][j+1]; h = +f[10][j+2]; if (c < nC && p < nP && h < HOLES) r.ob[c][p][h] = 1; }
+    return r;
+  } catch(e){ return null; }
+}
+function countScores(r){ var n = 0; for (var c=0;c<r.nC;c++) for (var p=0;p<r.nP;p++) for (var h=0;h<HOLES;h++) if (r.scores[c][p][h] != null) n++; return n; }
+function anyName(r){ for (var p=0;p<r.nP;p++) if ((r.players[p].name || '').trim()) return true; return false; }
+function rowEmpty(r, p){ for (var c=0;c<MAXC;c++) for (var h=0;h<HOLES;h++) if (r.scores[c][p][h] != null) return false; return true; }
+
+function planMerge(inc){
+  if (round.sample || (!hasScores(round) && !anyName(round))) return { adopt:true, inc:inc };
+  var plan = { adopt:false, inc:inc, map:[], added:[], skipped:[], fills:0, conflicts:[], obAdds:0, parDiff:[], useTheirPars:false, newCourses:Math.max(0, inc.nC - round.nC) };
+  var free = []; for (var q=0;q<round.nP;q++) if (!(round.players[q].name || '').trim() && rowEmpty(round, q)) free.push(q);
+  var next = round.nP, taken = {};
+  for (var ip=0; ip<inc.nP; ip++){
+    var nm = (inc.players[ip].name || '').trim(), lp = -1;
+    if (nm) for (var p=0;p<round.nP;p++) if (!taken[p] && (round.players[p].name || '').trim() === nm){ lp = p; break; }
+    if (lp < 0 && free.length) lp = free.shift();
+    if (lp < 0 && next < MAXP) lp = next++;
+    if (lp < 0){ plan.skipped.push(nm || ('경기자 ' + (ip+1))); plan.map.push(null); continue; }
+    taken[lp] = 1; plan.map.push(lp);
+    if (lp >= round.nP || !(round.players[lp].name || '').trim()) plan.added.push({ lp:lp, name:nm });
+  }
+  for (var c=0;c<inc.nC;c++) for (ip=0;ip<inc.nP;ip++){
+    var to = plan.map[ip]; if (to == null) continue;
+    var fresh = to >= round.nP || c >= round.nC;
+    for (var h=0;h<HOLES;h++){
+      var s = inc.scores[c][ip][h], mine = fresh ? null : round.scores[c][to][h];
+      if (s != null){ if (mine == null) plan.fills++; else if (mine !== s) plan.conflicts.push({ c:c, p:to, h:h, mine:mine, theirs:s, name:pName(inc, ip), use:'mine' }); }
+      if (inc.ob[c][ip][h] && (fresh || !round.ob[c][to][h])) plan.obAdds++;
+    }
+  }
+  for (c=0;c<Math.min(round.nC, inc.nC);c++) for (h=0;h<HOLES;h++) if (round.courses[c].pars[h] !== inc.courses[c].pars[h]) plan.parDiff.push({ c:c, h:h });
+  return plan;
+}
+function applyMerge(plan){
+  var inc = plan.inc, c, h, ip;
+  if (plan.adopt){ inc.id = uid(); round = inc; saveRound(); renderAll(); setTab('play'); toast('받은 경기를 가져왔어요 (점수 ' + countScores(inc) + '개)', 2800); return; }
+  for (c=round.nC;c<inc.nC;c++){ round.courses[c] = { name: inc.courses[c].name, pars: inc.courses[c].pars.slice() }; for (var x=0;x<MAXP;x++) for (h=0;h<HOLES;h++){ round.scores[c][x][h] = null; round.ob[c][x][h] = 0; } }
+  plan.added.forEach(function(a){
+    if (a.lp >= round.nP) for (c=0;c<MAXC;c++) for (h=0;h<HOLES;h++){ round.scores[c][a.lp][h] = null; round.ob[c][a.lp][h] = 0; }
+    round.players[a.lp].name = a.name;
+  });
+  plan.map.forEach(function(lp){ if (lp != null && lp + 1 > round.nP) round.nP = lp + 1; });
+  round.nC = Math.max(round.nC, inc.nC);
+  var n = 0;
+  for (c=0;c<inc.nC;c++) for (ip=0;ip<inc.nP;ip++){
+    var to = plan.map[ip]; if (to == null) continue;
+    for (h=0;h<HOLES;h++){
+      var s = inc.scores[c][ip][h];
+      if (s != null && round.scores[c][to][h] == null){ round.scores[c][to][h] = s; n++; }
+      if (inc.ob[c][ip][h]) round.ob[c][to][h] = 1;
+    }
+  }
+  plan.conflicts.forEach(function(k){ if (k.use === 'theirs'){ round.scores[k.c][k.p][k.h] = k.theirs; n++; } });
+  if (plan.useTheirPars) plan.parDiff.forEach(function(d){ round.courses[d.c].pars[d.h] = inc.courses[d.c].pars[d.h]; });
+  if (!(round.venue || '').trim() && inc.venue) round.venue = inc.venue;
+  if (!(round.group || '').trim() && inc.group) round.group = inc.group;
+  saveRound(); renderAll(); setTab('play');
+  toast('점수 ' + n + '개를 합쳤어요', 2600);
+}
+
+var qrPlan = null;
+function setQrMode(m){
+  $('#qrShow').hidden = m !== 'show'; $('#qrScan').hidden = m !== 'scan'; $('#qrMerge').hidden = m !== 'merge';
+  $('#qrTitle').textContent = m === 'show' ? '내 점수 QR' : (m === 'scan' ? 'QR 찍어서 합치기' : '이렇게 합칠까요?');
+}
+function showQr(){
+  need(LIB_QR, 'qrcode').then(function(){
+    var qr = window.qrcode(0, 'M'); qr.addData(encodeRound(round), 'Byte'); qr.make();
+    var n = qr.getModuleCount(), q = 4, cell = Math.max(4, Math.floor(640 / (n + q*2))), size = (n + q*2) * cell, cv = $('#qrCanvas'), g = cv.getContext('2d');
+    cv.width = cv.height = size; g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, size, size); g.fillStyle = '#000000';
+    for (var y=0;y<n;y++) for (var x=0;x<n;x++) if (qr.isDark(y, x)) g.fillRect((x+q)*cell, (y+q)*cell, cell, cell);
+    var cn = []; for (var c=0;c<round.nC;c++) cn.push(cName(round,c));
+    $('#qrInfo').textContent = round.nP + '명 · ' + cn.join('·') + '코스 · 입력된 점수 ' + countScores(round) + '개';
+    setQrMode('show'); openSheet('#qrSheet');
+  }, function(){ toast('QR 기능을 불러오지 못했어요.\n인터넷 연결을 확인한 뒤 다시 눌러 주세요', 3200); });
+}
+var scan = { stream:null, raf:0, det:null, busy:false, last:0 };
+function qrStatus(t, bad){ var s = $('#qrStatus'); s.textContent = t; s.classList.toggle('bad', !!bad); }
+function startScan(){
+  setQrMode('scan'); openSheet('#qrSheet'); qrStatus('카메라를 켜는 중이에요…');
+  var detP = ('BarcodeDetector' in window && BarcodeDetector.getSupportedFormats)
+    ? BarcodeDetector.getSupportedFormats().then(function(f){ return f.indexOf('qr_code') >= 0 ? new BarcodeDetector({ formats:['qr_code'] }) : null; }, function(){ return null; })
+    : Promise.resolve(null);
+  Promise.all([detP, need(LIB_JSQR, 'jsQR').catch(function(){ return null; })]).then(function(res){
+    scan.det = res[0];
+    if (!scan.det && !window.jsQR){ qrStatus('QR 읽기 기능을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.', true); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ qrStatus('이 화면에서는 카메라를 쓸 수 없어요. 아래 ‘QR 사진으로 불러오기’를 눌러 주세요.', true); return; }
+    navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false }).then(function(stream){
+      if ($('#qrSheet').hidden || $('#qrScan').hidden){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+      scan.stream = stream; var v = $('#qrVideo'); v.srcObject = stream; v.play().catch(function(){});
+      qrStatus('조원 휴대폰의 QR을 네모 안에 맞춰 주세요'); tick();
+    }, function(){ qrStatus('카메라를 켤 수 없어요. 카메라 권한을 허용하거나 아래 ‘QR 사진으로 불러오기’를 눌러 주세요.', true); });
+  });
+}
+function tick(){
+  if (!scan.stream) return;
+  scan.raf = requestAnimationFrame(tick);
+  var v = $('#qrVideo'), now = performance.now();
+  if (v.readyState < 2 || scan.busy || now - scan.last < 180) return;
+  scan.busy = true; scan.last = now;
+  readCode(v, v.videoWidth, v.videoHeight, 640).then(function(t){ scan.busy = false; if (t && scan.stream) gotCode(t, true); }, function(){ scan.busy = false; });
+}
+var readCv = null;
+function readCode(src, w, h, max){
+  if (scan.det) return scan.det.detect(src).then(function(r){ return r.length ? r[0].rawValue : null; });
+  var k = Math.min(1, max / Math.max(w, h)), cw = Math.max(1, Math.round(w*k)), ch = Math.max(1, Math.round(h*k));
+  readCv = readCv || document.createElement('canvas'); readCv.width = cw; readCv.height = ch;
+  var g = readCv.getContext('2d', { willReadFrequently:true }); g.drawImage(src, 0, 0, cw, ch);
+  var res = window.jsQR(g.getImageData(0, 0, cw, ch).data, cw, ch, { inversionAttempts: max > 700 ? 'attemptBoth' : 'dontInvert' });
+  return Promise.resolve(res ? res.data : null);
+}
+function stopScan(){
+  cancelAnimationFrame(scan.raf);
+  if (scan.stream) scan.stream.getTracks().forEach(function(t){ t.stop(); });
+  scan.stream = null; var v = $('#qrVideo'); if (v) v.srcObject = null;
+}
+function gotCode(text, live){
+  var inc = decodeRound(text);
+  if (!inc){ if (live) qrStatus('파크노트 QR이 아니에요. 조원 휴대폰의 ‘내 QR 보여주기’ 화면을 찍어 주세요.', true); else toast('파크노트 QR이 아니에요', 2600); return; }
+  stopScan(); if (navigator.vibrate) navigator.vibrate(60);
+  qrPlan = planMerge(inc); renderPlan(); setQrMode('merge');
+}
+$('#qrFile').addEventListener('change', function(e){
+  var file = e.target.files && e.target.files[0]; e.target.value = ''; if (!file) return;
+  var url = URL.createObjectURL(file), img = new Image();
+  img.onload = function(){
+    var p = scan.det ? readCode(img, img.naturalWidth, img.naturalHeight, 1400) : need(LIB_JSQR, 'jsQR').then(function(){ return readCode(img, img.naturalWidth, img.naturalHeight, 1400); });
+    p.then(function(t){ URL.revokeObjectURL(url); if (t) gotCode(t, false); else toast('사진에서 QR을 찾지 못했어요.\nQR이 크게 나오게 다시 찍어 주세요', 3200); }, function(){ URL.revokeObjectURL(url); toast('사진을 읽지 못했어요', 2400); });
+  };
+  img.onerror = function(){ URL.revokeObjectURL(url); toast('사진을 열 수 없어요', 2400); };
+  img.src = url;
+});
+function renderPlan(){
+  var pl = qrPlan, inc = pl.inc, cn = [], c, html = '';
+  for (c=0;c<inc.nC;c++) cn.push(cName(inc,c));
+  var who = []; for (var p=0;p<inc.nP;p++) who.push(pName(inc,p));
+  html += '<div class="merge-from"><span class="label">받은 QR</span><b>' + esc([inc.venue, inc.group].filter(Boolean).join(' · ') || fmtDate(inc.date)) + '</b><span>' + esc(who.join(', ')) + ' · ' + esc(cn.join('·')) + '코스 · 점수 ' + countScores(inc) + '개</span></div>';
+  if (pl.adopt){
+    html += '<p>지금 이 휴대폰에는 진행 중인 경기가 없어서, 받은 경기를 그대로 가져와요.</p>';
+    $('#qrApply').textContent = '이 경기 가져오기'; $('#qrApply').disabled = false;
+  } else {
+    var items = [];
+    items.push(['새로 채울 점수', pl.fills + '개']);
+    if (pl.added.length) items.push(['함께 넣을 사람', pl.added.map(function(a){ return a.name || '이름 없음'; }).join(', ')]);
+    if (pl.newCourses) items.push(['새로 생길 코스', pl.newCourses + '개']);
+    if (pl.obAdds) items.push(['OB 표시', pl.obAdds + '개']);
+    html += '<ul class="merge-list">' + items.map(function(it){ return '<li><span>' + it[0] + '</span><b>' + esc(it[1]) + '</b></li>'; }).join('') + '</ul>';
+    if (pl.skipped.length) html += '<p class="small bad">인원이 6명을 넘어서 못 넣는 사람: ' + esc(pl.skipped.join(', ')) + '</p>';
+    if (pl.conflicts.length){
+      html += '<div class="row between" style="margin-top:.5rem"><h3>점수가 서로 달라요 · ' + pl.conflicts.length + '개</h3><button type="button" class="link-btn small" data-cf-all>모두 받은 점수로</button></div>';
+      html += pl.conflicts.map(function(k, i){
+        return '<div class="cf-row"><span><b>' + esc(pName(round,k.p) === ('경기자 ' + (k.p+1)) ? k.name : pName(round,k.p)) + '</b> · ' + esc(cName(round,k.c)) + '코스 ' + (k.h+1) + '번 홀</span>'
+          + '<div class="seg full" role="group"><button type="button" data-cf="' + i + '" data-use="mine" aria-pressed="' + (k.use === 'mine') + '">내 점수 ' + k.mine + '</button><button type="button" data-cf="' + i + '" data-use="theirs" aria-pressed="' + (k.use === 'theirs') + '">받은 점수 ' + k.theirs + '</button></div></div>';
+      }).join('');
+    }
+    if (pl.parDiff.length){
+      html += '<div class="cf-row"><span>파 설정이 다른 홀 <b>' + pl.parDiff.length + '개</b></span><div class="seg full" role="group"><button type="button" data-par-use="mine" aria-pressed="' + !pl.useTheirPars + '">내 파 유지</button><button type="button" data-par-use="theirs" aria-pressed="' + pl.useTheirPars + '">받은 파 사용</button></div></div>';
+    }
+    var nothing = !pl.fills && !pl.conflicts.length && !pl.added.length && !pl.newCourses && !pl.obAdds && !pl.parDiff.length;
+    if (nothing) html += '<p class="empty-note">합칠 새 점수가 없어요. 이미 같은 내용이에요.</p>';
+    $('#qrApply').textContent = '합치기'; $('#qrApply').disabled = nothing;
+  }
+  $('#qrPlan').innerHTML = html;
+}
+$('#qrPlan').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b || !qrPlan) return;
+  if (b.dataset.cf != null) qrPlan.conflicts[+b.dataset.cf].use = b.dataset.use;
+  else if (b.hasAttribute('data-cf-all')) qrPlan.conflicts.forEach(function(k){ k.use = 'theirs'; });
+  else if (b.dataset.parUse) qrPlan.useTheirPars = b.dataset.parUse === 'theirs';
+  else return;
+  renderPlan();
+});
+$('#qrApply').addEventListener('click', function(){ if (!qrPlan) return; var pl = qrPlan; qrPlan = null; $('#qrSheet').hidden = true; applyMerge(pl); });
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-qr]'); if (!b) return;
+  if (b.dataset.qr === 'show') showQr(); else startScan();
+});
 
 /* ---------- history ---------- */
 var statPick = null;
