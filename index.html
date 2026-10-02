@@ -8,8 +8,6 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="파크노트">
 <meta name="description" content="파크골프 점수 기록, 순위, 결과 사진·링크 보내기, 구장 날씨, 만보기">
 <meta property="og:type" content="website">
@@ -638,7 +636,7 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     </div>
   </section>
 
-  <p class="credit">파크노트 · ☕ 만든이 커피향기<br>기록은 이 휴대폰 안에만 저장됩니다.</p>
+  <p class="credit">파크노트 · ☕ 만든이 커피향기<br>기록은 이 휴대폰 안에만 저장됩니다.<br><button id="howtoLink" class="link-btn small" type="button">홈 화면 바로가기 만드는 법</button></p>
 </main>
 
 <nav class="tabs" aria-label="화면 전환">
@@ -674,8 +672,9 @@ tfoot .num{font-size:1.375rem;font-weight:700}
   <div class="sheet-in" role="dialog" aria-modal="true" aria-label="홈 화면에 추가하는 방법">
     <span class="grab" aria-hidden="true"></span>
     <div class="row between"><h3>홈 화면에 파크노트 추가</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
-    <p class="muted">한 번 추가해 두면 앱처럼 아이콘을 눌러 바로 열 수 있어요.</p>
+    <p class="muted">홈 화면에 파크노트 <b>바로가기 아이콘</b>이 생겨요. 앱을 설치하는 게 아니라서 보안 경고가 뜨지 않아요.</p>
     <ol id="howto" class="howto"></ol>
+    <button id="shortcutDone" class="btn pri wide" type="button">다 했어요 (이 버튼 숨기기)</button>
   </div>
 </div>
 <div id="kakaoGate" class="kgate" hidden role="dialog" aria-modal="true" aria-labelledby="kgTitle">
@@ -1406,28 +1405,21 @@ $$('.sheet').forEach(function(s){
 });
 document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ $$('.sheet').forEach(function(s){ s.hidden = true; }); stopScan(); } });
 
-/* home-screen shortcut */
-var installEvt = null;
-function isStandalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
-window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); installEvt = e; });
-window.addEventListener('appinstalled', function(){ installEvt = null; $('#installBtn').hidden = true; toast('홈 화면에 ' + APP_NAME + '를 추가했어요'); });
+/* home-screen shortcut: the site is deliberately not an installable app (manifest display "browser"),
+   so every browser just pins a shortcut icon. Installing as an app made Samsung Internet build its own APK,
+   which Google Play Protect blocks. */
 function howtoSteps(){
   var ua = navigator.userAgent || '';
-  if (/KAKAOTALK/i.test(ua)) return ['카카오톡 안에서는 홈 화면 추가가 안 돼요.', '오른쪽 아래(또는 위) <b>⋮</b> 메뉴 → <b>다른 브라우저로 열기</b>를 누르세요.', '새로 열린 화면에서 이 버튼을 다시 누르세요.'];
+  if (/KAKAOTALK/i.test(ua)) return ['카카오톡 안에서는 바로가기를 만들 수 없어요.', '오른쪽 아래(또는 위) <b>⋮</b> 메뉴 → <b>다른 브라우저로 열기</b>를 누르세요.', '새로 열린 화면에서 이 버튼을 다시 누르세요.'];
   if (/iPhone|iPad|iPod/i.test(ua)) return ['화면 아래(또는 위)의 <b>공유 버튼</b>(네모에 위쪽 화살표)을 누르세요.', '목록을 올려 <b>홈 화면에 추가</b>를 누르세요.', '오른쪽 위 <b>추가</b>를 누르면 끝!'];
-  if (/SamsungBrowser/i.test(ua)) return ['화면 아래 <b>≡ 메뉴</b>를 누르세요.', '<b>현재 페이지 추가</b> → <b>홈 화면</b>을 누르세요.', '<b>추가</b>를 누르면 끝!'];
-  if (/Android/i.test(ua)) return ['오른쪽 위 <b>⋮ 메뉴</b>를 누르세요.', '<b>홈 화면에 추가</b>(또는 <b>앱 설치</b>)를 누르세요.', '<b>추가</b>(설치)를 누르면 끝!'];
-  return ['주소창 오른쪽의 <b>설치 아이콘</b>을 누르거나,', '브라우저 메뉴에서 <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누르세요.'];
+  if (/SamsungBrowser/i.test(ua)) return ['화면 아래 오른쪽 <b>메뉴 버튼</b>(⋮ 또는 ≡)을 누르세요.', '<b>현재 페이지 추가</b>를 누른 뒤 <b>홈 화면</b>을 고르세요.', '<b>추가</b>를 누르면 홈 화면에 파크노트 아이콘이 생겨요.'];
+  if (/Android/i.test(ua)) return ['오른쪽 위 <b>⋮ 메뉴</b>를 누르세요.', '<b>홈 화면에 추가</b>를 누르세요.', '<b>추가</b>를 누르면 홈 화면에 파크노트 아이콘이 생겨요.'];
+  return ['브라우저 메뉴에서 <b>홈 화면에 추가</b> 또는 <b>바로가기 만들기</b>를 누르세요.'];
 }
-$('#installBtn').addEventListener('click', function(){
-  if (installEvt){
-    var ev = installEvt; installEvt = null; ev.prompt();
-    if (ev.userChoice) ev.userChoice.then(function(c){ if (c && c.outcome === 'accepted') $('#installBtn').hidden = true; });
-    return;
-  }
-  $('#howto').innerHTML = howtoSteps().map(function(s){ return '<li>' + s + '</li>'; }).join('');
-  openSheet('#installSheet');
-});
+function openHowto(){ $('#howto').innerHTML = howtoSteps().map(function(s){ return '<li>' + s + '</li>'; }).join(''); openSheet('#installSheet'); }
+$('#installBtn').addEventListener('click', openHowto);
+$('#howtoLink').addEventListener('click', openHowto);
+$('#shortcutDone').addEventListener('click', function(){ settings.shortcutDone = true; saveSettings(); $('#installBtn').hidden = true; $('#installSheet').hidden = true; toast('다음부터는 홈 화면의 파크노트 아이콘을 누르세요', 2800); });
 
 /* live clock in the header */
 function tickClock(){
@@ -2031,7 +2023,7 @@ $$('.tab').forEach(function(b){ b.addEventListener('click', function(){ setTab(b
 $('#bigBtn').addEventListener('click', function(){ settings.big = !settings.big; saveSettings(); renderTop(); });
 $('#nightBtn').addEventListener('click', function(){ settings.night = !settings.night; saveSettings(); renderTop(); });
 
-$('#installBtn').hidden = isStandalone();
+$('#installBtn').hidden = !!settings.shortcutDone || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
 tickClock(); setInterval(tickClock, 15000);
 renderWx(); if (wxCoords()) loadWx(false);
 var start = (location.hash || '').slice(1);
