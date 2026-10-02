@@ -4,66 +4,56 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!--pwa-->
-<meta name="theme-color" content="#0F4630">
+<meta name="theme-color" content="#21804F">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="스코어북">
+<meta name="apple-mobile-web-app-title" content="파크노트">
 <!--/pwa-->
-<title>파크골프 스코어북</title>
+<title>파크노트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;700;800&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
 <style>
-/* Layout: club scorecard. A pine-green hero carries the moment (course, hole, par); a quiet white player sheet sits below;
+/* Layout: club scorecard. A fairway-green hero carries the moment (course, hole, par); a quiet white player sheet sits below;
    a floating glass tab bar sits in thumb reach. Golf notation on the card: circle = under par, square = over par, brass disc = hole-in-one. */
 :root{
-  --bg:#EDF1EC; --surface:#FFFFFF; --surface-2:#F2F5F1; --raise:#FFFFFF;
-  --ink:#0F1C15; --ink-2:#56645B; --ink-3:#8A968E; --hair:rgba(15,28,21,.09);
-  --accent:#1D7447; --accent-ink:#FFFFFF; --accent-soft:#E0EEE5;
-  --pine:#0F4630; --pine-2:#082B1D; --on-pine:#F3F8F4; --on-pine-2:rgba(243,248,244,.68); --on-pine-3:rgba(243,248,244,.13); --mint:#9BE3B9;
-  --brass:#A47E22; --brass-soft:#F5ECD6;
-  --under:#2460B0; --under-soft:#E3ECF8;
-  --over:#BE412E; --over-soft:#F9E5E0;
-  --shadow:0 1px 2px rgba(15,28,21,.05),0 12px 32px -16px rgba(15,28,21,.22);
-  --shadow-lg:0 2px 6px rgba(15,28,21,.06),0 28px 56px -24px rgba(15,28,21,.42);
-  --glass:rgba(255,255,255,.78);
-  --scrim:rgba(8,18,12,.42);
+  --bg:#F1F5F0; --surface:#FFFFFF; --surface-2:#EFF3EE; --raise:#FFFFFF;
+  --ink:#0F1C15; --ink-2:#46534B; --ink-3:#66736B; --hair:rgba(15,28,21,.11);
+  --accent:#1D7447; --accent-ink:#FFFFFF; --accent-soft:#DDEEE3;
+  --pine:#21804F; --pine-2:#16653D; --on-pine:#FFFFFF; --on-pine-2:rgba(255,255,255,.86); --on-pine-3:rgba(255,255,255,.16); --mint:#B8F0CF;
+  --brass:#9C7414; --brass-soft:#FBF1D9;
+  --under:#1F5DB0; --under-soft:#E1EBF8;
+  --over:#BA3B28; --over-soft:#FBE6E1;
+  --coffee:#7A4B2A; --coffee-soft:#F4E9DF;
+  --shadow:0 1px 2px rgba(15,28,21,.05),0 10px 28px -16px rgba(15,28,21,.2);
+  --shadow-lg:0 2px 6px rgba(15,28,21,.06),0 22px 44px -22px rgba(15,28,21,.32);
+  --glass:rgba(255,255,255,.86);
+  --scrim:rgba(8,18,12,.45);
   --f-ui:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
   --f-num:"Barlow Semi Condensed","Barlow","Roboto Condensed","Arial Narrow",sans-serif;
   --r-lg:22px; --r:16px; --r-sm:12px;
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#08100B; --surface:#111A15; --surface-2:#18231D; --raise:#26332C;
-    --ink:#E7EFE9; --ink-2:#9AA9A0; --ink-3:#6E7D74; --hair:rgba(255,255,255,.075);
-    --accent:#4FC487; --accent-ink:#04140B; --accent-soft:#15301F;
-    --pine:#123F2C; --pine-2:#0A2318;
-    --brass:#E0BC5C; --brass-soft:#2B2513;
-    --under:#83B3F3; --under-soft:#14233A;
-    --over:#F39482; --over-soft:#36201A;
-    --shadow:0 12px 32px -16px rgba(0,0,0,.75);
-    --shadow-lg:0 28px 56px -24px rgba(0,0,0,.85);
-    --glass:rgba(17,26,21,.8);
-    --scrim:rgba(0,0,0,.6);
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#08100B; --surface:#111A15; --surface-2:#18231D; --raise:#26332C;
-  --ink:#E7EFE9; --ink-2:#9AA9A0; --ink-3:#6E7D74; --hair:rgba(255,255,255,.075);
-  --accent:#4FC487; --accent-ink:#04140B; --accent-soft:#15301F;
-  --pine:#123F2C; --pine-2:#0A2318;
-  --brass:#E0BC5C; --brass-soft:#2B2513;
-  --under:#83B3F3; --under-soft:#14233A;
-  --over:#F39482; --over-soft:#36201A;
-  --shadow:0 12px 32px -16px rgba(0,0,0,.75);
-  --shadow-lg:0 28px 56px -24px rgba(0,0,0,.85);
-  --glass:rgba(17,26,21,.8);
+html.night{
+  --bg:#0B120E; --surface:#141E18; --surface-2:#1B2721; --raise:#2A3830;
+  --ink:#ECF2EE; --ink-2:#AEBBB3; --ink-3:#8A988F; --hair:rgba(255,255,255,.09);
+  --accent:#52C78A; --accent-ink:#06150D; --accent-soft:#183323;
+  --pine:#1A5E3B; --pine-2:#123F29;
+  --brass:#E0BC5C; --brass-soft:#2D2714;
+  --under:#86B6F4; --under-soft:#16263C;
+  --over:#F49A88; --over-soft:#3A221C;
+  --coffee:#E2B48F; --coffee-soft:#33261C;
+  --shadow:0 10px 28px -16px rgba(0,0,0,.7);
+  --shadow-lg:0 22px 44px -22px rgba(0,0,0,.8);
+  --glass:rgba(20,30,24,.86);
   --scrim:rgba(0,0,0,.6);
   color-scheme:dark;
 }
+html.night .bar.today i{background:var(--mint)}
+/* The app opens bright on purpose (outdoor use, older players) and ignores the phone's dark setting; night mode is an opt-in toggle. */
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{font-size:100%;-webkit-text-size-adjust:100%}
@@ -84,11 +74,27 @@ p{margin:0}
 
 /* top bar */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--glass);-webkit-backdrop-filter:saturate(1.6) blur(16px);backdrop-filter:saturate(1.6) blur(16px);border-bottom:1px solid var(--hair)}
-.top-in{max-width:34rem;margin:0 auto;padding:.625rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.top-in{max-width:34rem;margin:0 auto;padding:.625rem 1rem .5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
 .brand{display:flex;align-items:center;gap:.625rem;min-width:0}
 .brand svg{flex:none;border-radius:10px;box-shadow:0 4px 12px -4px rgba(15,70,48,.6)}
 .brand>div{min-width:0}
-.brand h1{font-size:1.0625rem;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.2}
+.brand h1{font-size:1.375rem;font-weight:800;letter-spacing:-.04em;margin:0;line-height:1.1}
+.maker{display:inline-flex;align-items:center;gap:.25rem;margin-top:.25rem;padding:.125rem .5rem .125rem .375rem;border-radius:999px;background:var(--coffee-soft);color:var(--coffee);font-size:.75rem;font-weight:800;line-height:1.4;white-space:nowrap}
+.maker svg{width:.9375rem;height:.9375rem;flex:none}
+.install-btn{display:inline-flex;align-items:center;gap:.375rem;min-height:2.75rem;padding:0 .875rem 0 .75rem;border-radius:999px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:.875rem;line-height:1.15;text-align:left;box-shadow:0 8px 18px -10px var(--accent);flex:none}
+.install-btn svg{width:1.25rem;height:1.25rem;flex:none}
+.sub-in{max-width:34rem;margin:0 auto;padding:0 1rem .5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.clock{display:flex;align-items:baseline;gap:.5rem;font-weight:700;font-size:.9375rem;color:var(--ink-2);min-width:0;white-space:nowrap}
+.clock .num{font-size:1.25rem;font-weight:700;color:var(--ink)}
+.tools{display:flex;align-items:center;gap:.375rem;flex:none}
+.icon-btn{width:2.25rem;height:2.25rem;border-radius:50%;border:0;background:var(--surface-2);color:var(--ink-2);display:grid;place-items:center;padding:0}
+.icon-btn svg{width:1.125rem;height:1.125rem}
+.icon-btn .i-sun,html.night .icon-btn .i-moon{display:none}
+html.night .icon-btn .i-sun{display:block}
+.howto{margin:0;padding-left:1.5rem;display:grid;gap:.625rem;font-size:1.0625rem;line-height:1.5}
+.howto li::marker{font-family:var(--f-num);font-weight:700;color:var(--accent)}
+.btn.kakao{background:#FEE500;color:#191600;box-shadow:0 10px 22px -12px rgba(120,100,0,.6)}
+.btn.big{min-height:3.5rem;font-size:1.125rem}
 .top-meta{font-size:.75rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill-btn{min-height:2.25rem;padding:0 .875rem;border-radius:999px;border:0;background:var(--surface-2);font-weight:700;font-size:.8125rem;white-space:nowrap;color:var(--ink-2)}
 .pill-btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -357,10 +363,17 @@ tfoot .num{font-size:1.375rem;font-weight:700}
 <header class="top">
   <div class="top-in">
     <div class="brand">
-      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="bgr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D7447"/><stop offset="1" stop-color="#082B1D"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#bgr)"/><path d="M14 27V9l10 4.2L14 17.4" fill="none" stroke="#F3F8F4" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="17.5" cy="27" rx="6.5" ry="1.7" fill="#9BE3B9" opacity=".8"/></svg>
-      <div><h1>파크골프 스코어북</h1><div id="topMeta" class="top-meta"></div></div>
+      <svg width="40" height="40" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="bgr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A9660"/><stop offset="1" stop-color="#16653D"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#bgr)"/><path d="M14 27V9l10 4.2L14 17.4" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="17.5" cy="27" rx="6.5" ry="1.7" fill="#B8F0CF" opacity=".9"/></svg>
+      <div><h1>파크노트</h1><span class="maker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/></svg>커피향기 제작</span></div>
     </div>
-    <button id="bigBtn" class="pill-btn" type="button" aria-pressed="false">큰 글씨</button>
+    <button id="installBtn" class="install-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9 11h6"/></svg>홈 화면에<br>추가</button>
+  </div>
+  <div class="sub-in">
+    <div class="clock" aria-label="오늘 날짜와 시각"><span id="clockDate"></span><span id="clockTime" class="num"></span></div>
+    <div class="tools">
+      <button id="nightBtn" class="icon-btn" type="button" aria-pressed="false" aria-label="어두운 화면으로 바꾸기" title="어두운 화면"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg></button>
+      <button id="bigBtn" class="pill-btn" type="button" aria-pressed="false">큰 글씨</button>
+    </div>
   </div>
 </header>
 
@@ -474,10 +487,8 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     <div class="card stack">
       <div class="field"><label class="label" for="fNote">참고 메모</label><textarea id="fNote" class="inp" placeholder="날씨, 내기, 특이사항 등"></textarea></div>
       <div class="btn-grid">
+        <button id="shareBtn" class="btn kakao big full" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>결과 사진 보내기 (카톡)</button>
         <button id="saveBtn" class="btn pri full" type="button">기록 저장</button>
-        <button id="shareBtn" class="btn" type="button">결과 공유</button>
-        <button id="copyBtn" class="btn" type="button">텍스트 복사</button>
-        <button id="imgBtn" class="btn full" type="button">결과 이미지 만들기</button>
         <button id="newBtn" class="btn warn full" type="button">새 경기 시작</button>
       </div>
     </div>
@@ -540,7 +551,7 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     </div>
   </section>
 
-  <p class="credit">점수표 구성은 <a href="https://github.com/leejh50-dotcom/parkgolf-score" target="_blank" rel="noopener">파시스 sv2.1</a>(MIT)을 참고해 새로 만들었습니다.<br>데이터는 이 기기 브라우저에만 저장됩니다.</p>
+  <p class="credit">파크노트 · ☕ 만든이 커피향기<br>기록은 이 휴대폰 안에만 저장됩니다.</p>
 </main>
 
 <nav class="tabs" aria-label="화면 전환">
@@ -554,12 +565,29 @@ tfoot .num{font-size:1.375rem;font-weight:700}
 </nav>
 
 <div id="sheet" class="sheet" hidden>
-  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="결과 이미지">
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="결과 사진 보내기">
     <span class="grab" aria-hidden="true"></span>
-    <div class="row between"><h3>결과 이미지</h3><button id="sheetClose" class="pill-btn" type="button">닫기</button></div>
-    <img id="sheetImg" alt="경기 결과 이미지">
-    <p class="small muted">이미지를 길게 누르면 사진첩에 저장하거나 카카오톡으로 보낼 수 있어요.</p>
-    <button id="sheetShare" class="btn pri wide" type="button">이미지 공유</button>
+    <div class="row between"><h3>결과 사진 보내기</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
+    <div id="segShot" class="seg full" role="group" aria-label="사진 종류">
+      <button type="button" data-shot="sum">합계표만</button>
+      <button type="button" data-shot="all">전체 점수표</button>
+    </div>
+    <img id="sheetImg" alt="경기 결과 사진">
+    <button id="shareImgBtn" class="btn kakao big wide" type="button">카카오톡으로 사진 보내기</button>
+    <div class="btn-grid">
+      <button id="copyImgBtn" class="btn" type="button">사진 복사</button>
+      <a id="saveImgBtn" class="btn" href="#" download="parknote.png">사진 저장</a>
+      <button id="shareTxtBtn" class="btn full" type="button">글자로 보내기</button>
+    </div>
+    <p class="small muted">보내기 창이 뜨면 <b>카카오톡</b>을 고르세요. 버튼이 안 되면 사진을 길게 눌러 저장한 뒤 카카오톡에서 보내면 됩니다.</p>
+  </div>
+</div>
+<div id="installSheet" class="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="홈 화면에 추가하는 방법">
+    <span class="grab" aria-hidden="true"></span>
+    <div class="row between"><h3>홈 화면에 파크노트 추가</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
+    <p class="muted">한 번 추가해 두면 앱처럼 아이콘을 눌러 바로 열 수 있어요.</p>
+    <ol id="howto" class="howto"></ol>
   </div>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -579,6 +607,7 @@ var MAXP = 6, MAXC = 4, HOLES = 9;
 var LETTERS = ['A','B','C','D'];
 var DEFAULT_PARS = [3,4,3,4,5,3,4,3,4];
 var DOW = ['일','월','화','수','목','금','토'];
+var APP_NAME = '파크노트', MAKER = '커피향기';
 var ICON_NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
 
 function pad(n){ return (n < 10 ? '0' : '') + n; }
@@ -638,7 +667,7 @@ function sampleHistory(){
 }
 
 /* ---------- state ---------- */
-var settings = Object.assign({ tie:'shared', big:false, stride:65, goal:10000, sens:'mid' }, store.get(K.set, {}));
+var settings = Object.assign({ tie:'shared', big:false, night:false, stride:65, goal:10000, sens:'mid' }, store.get(K.set, {}));
 var round = store.get(K.round, null);
 var history = store.get(K.hist, null);
 var names = store.get(K.names, []);
@@ -727,12 +756,12 @@ function armed(btn, label, fn){
 
 /* ---------- header ---------- */
 function renderTop(){
-  var bits = [fmtDate(round.date)];
-  if (round.venue) bits.push(round.venue);
-  if (round.group) bits.push(round.group);
-  $('#topMeta').textContent = bits.join(' · ');
   $('#bigBtn').setAttribute('aria-pressed', settings.big ? 'true' : 'false');
   document.documentElement.classList.toggle('big', !!settings.big);
+  document.documentElement.classList.toggle('night', !!settings.night);
+  var nb = $('#nightBtn'); nb.setAttribute('aria-pressed', settings.night ? 'true' : 'false');
+  nb.setAttribute('aria-label', settings.night ? '밝은 화면으로 바꾸기' : '어두운 화면으로 바꾸기'); nb.title = settings.night ? '밝은 화면' : '어두운 화면';
+  var tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', settings.night ? '#0B120E' : '#21804F');
 }
 
 /* ---------- setup ---------- */
@@ -974,40 +1003,36 @@ function renderResults(){
 $('#segTie').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; settings.tie = b.dataset.tie; saveSettings(); renderResults(); });
 $('#fNote').addEventListener('input', function(e){ round.note = e.target.value; saveRound(); });
 
-function buildText(){
-  var rk = ranking(round, settings.tie), L = [];
+function buildText(r){
+  var rk = ranking(r, settings.tie), L = [];
   L.push('⛳ 파크골프 경기 결과');
   L.push('━━━━━━━━━━━━━━');
-  L.push('📅 ' + fmtDate(round.date));
-  if (round.venue) L.push('📍 ' + round.venue);
-  if (round.group) L.push('👥 ' + round.group);
-  var cn = []; for (var c=0;c<round.nC;c++) cn.push(cName(round,c)); L.push('🏌 ' + cn.join('·') + '코스 (' + rk.total + '홀)');
+  L.push('📅 ' + fmtDate(r.date));
+  if (r.venue) L.push('📍 ' + r.venue);
+  if (r.group) L.push('👥 ' + r.group);
+  var cn = []; for (var c=0;c<r.nC;c++) cn.push(cName(r,c)); L.push('🏌 ' + cn.join('·') + '코스 (' + rk.total + '홀)');
   L.push('');
   rk.rows.forEach(function(x){
     var cs = x.st.course.map(function(v){ return v ? v.s : '-'; }).join('/');
-    L.push(x.rank + '위 ' + pName(round,x.p) + '  ' + x.st.strokes + '타 (' + tpPlain(x.st.tp) + ')  [' + cs + ']' + (x.st.ace ? ' 🎯홀인원' + x.st.ace : ''));
+    L.push(x.rank + '위 ' + pName(r,x.p) + '  ' + x.st.strokes + '타 (' + tpPlain(x.st.tp) + ')  [' + cs + ']' + (x.st.ace ? ' 🎯홀인원' + x.st.ace : ''));
   });
-  if (round.steps) L.push('', '👟 ' + comma(round.steps) + '보');
-  if (round.note) L.push('', '📝 ' + round.note);
+  if (r.steps) L.push('', '👟 ' + comma(r.steps) + '보');
+  if (r.note) L.push('', '📝 ' + r.note);
   L.push('━━━━━━━━━━━━━━');
+  L.push(APP_NAME + ' · 만든이 ' + MAKER);
   return L.join('\n');
 }
 function copyText(text){
   function fallback(){
     var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
-    document.body.removeChild(ta); toast(ok ? '복사했어요. 카카오톡 대화창에 붙여넣기 하세요' : '복사가 막혀 있어요. 직접 선택해 복사해 주세요', 3000);
+    document.body.removeChild(ta); toast(ok ? '글자를 복사했어요.\n카카오톡 대화창에 붙여넣기 하세요' : '복사가 막혀 있어요. 직접 선택해 복사해 주세요', 3000);
   }
   if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(function(){ toast('복사했어요. 카카오톡 대화창에 붙여넣기 하세요', 3000); }, fallback);
+    navigator.clipboard.writeText(text).then(function(){ toast('글자를 복사했어요.\n카카오톡 대화창에 붙여넣기 하세요', 3000); }, fallback);
   } else fallback();
 }
-$('#copyBtn').addEventListener('click', function(){ copyText(buildText()); });
-$('#shareBtn').addEventListener('click', function(){
-  var text = buildText();
-  if (navigator.share){ navigator.share({ text: text }).catch(function(err){ if (err && err.name === 'AbortError') return; copyText(text); }); }
-  else copyText(text);
-});
+$('#shareBtn').addEventListener('click', function(){ openShot(round); });
 $('#saveBtn').addEventListener('click', function(){
   if (!hasScores(round)){ toast('저장할 점수가 없어요'); return; }
   if (round.sample){ toast('예시 경기는 저장하지 않아요. 새 경기를 시작해 주세요', 2800); return; }
@@ -1027,28 +1052,28 @@ $('#newBtn').addEventListener('click', function(e){
   });
 });
 
-/* ---------- result image (canvas, always light) ---------- */
-var lastBlob = null;
-function drawImage(){
-  var rk = ranking(round, settings.tie), sts = [], p, c;
-  for (p=0;p<round.nP;p++) sts.push(stats(round,p));
-  var W = 1080, pad = 64, rowH = 104, tblRow = 72;
-  var H = 330 + Math.max(1, rk.rows.length) * rowH + 70 + (round.nC + 2) * tblRow + 110;
+/* ---------- result photo (canvas, always light) ---------- */
+var IMG = { bg:'#F1F5F0', card:'#FFFFFF', band:'#EFF3EE', ink:'#0F1C15', muted:'#46534B', faint:'#66736B', hair:'#DCE3DA', pine:'#21804F', pine2:'#16653D', mint:'#B8F0CF', under:'#1F5DB0', over:'#BA3B28', brass:'#9C7414', brassSoft:'#FBF1D9', coffee:'#7A4B2A' };
+var FB = '"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif', FN = '"Barlow Semi Condensed","Arial Narrow",sans-serif';
+function drawImage(r, mode){
+  var rk = ranking(r, settings.tie), sts = [], p, c, C = IMG;
+  for (p=0;p<r.nP;p++) sts.push(stats(r,p));
+  var W = 1080, pad = 64, rowH = 104, tblRow = 72, holeRow = 70;
+  var H = 314 + Math.max(1, rk.rows.length) * rowH + 80 + (r.nC + 1) * tblRow + 24 + 110;
+  if (mode === 'all') H += r.nC * (108 + (r.nP + 2) * holeRow) + 10;
   var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   var g = cv.getContext('2d');
-  var C = { bg:'#EDF1EC', card:'#FFFFFF', ink:'#0F1C15', muted:'#56645B', faint:'#8A968E', hair:'#DDE3DC', pine:'#0F4630', pine2:'#082B1D', mint:'#9BE3B9', under:'#2460B0', over:'#BE412E', brass:'#A47E22', brassSoft:'#F5ECD6' };
-  var FB = '"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif', FN = '"Barlow Semi Condensed","Arial Narrow",sans-serif';
   g.fillStyle = C.bg; g.fillRect(0,0,W,H);
   g.save();
   var grd = g.createLinearGradient(0,0,W*0.4,280); grd.addColorStop(0,C.pine); grd.addColorStop(1,C.pine2);
   g.fillStyle = grd; roundRect(g, 24, 24, W-48, 250, 40); g.fill(); g.clip();
-  g.strokeStyle = 'rgba(243,248,244,.12)'; g.lineWidth = 2; g.beginPath(); g.arc(W-90, 300, 170, 0, Math.PI*2); g.stroke(); g.beginPath(); g.arc(W-90, 300, 250, 0, Math.PI*2); g.stroke();
+  g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 2; g.beginPath(); g.arc(W-90, 300, 170, 0, Math.PI*2); g.stroke(); g.beginPath(); g.arc(W-90, 300, 250, 0, Math.PI*2); g.stroke();
   g.restore();
-  g.fillStyle = 'rgba(243,248,244,.7)'; g.font = '700 30px ' + FB; g.textBaseline = 'alphabetic';
-  var cn = []; for (c=0;c<round.nC;c++) cn.push(cName(round,c));
-  g.fillText([fmtDate(round.date), round.venue].filter(Boolean).join('  ·  '), pad + 12, 100);
-  g.fillStyle = '#F3F8F4'; g.font = '800 64px ' + FB; g.fillText('파크골프 경기 결과', pad + 12, 182);
-  g.fillStyle = C.mint; g.font = '700 30px ' + FB; g.fillText([round.group, cn.join('·') + '코스 ' + rk.total + '홀'].filter(Boolean).join('  ·  '), pad + 12, 234);
+  g.fillStyle = 'rgba(255,255,255,.88)'; g.font = '700 30px ' + FB; g.textBaseline = 'alphabetic';
+  var cn = []; for (c=0;c<r.nC;c++) cn.push(cName(r,c));
+  g.fillText([fmtDate(r.date), r.venue].filter(Boolean).join('  ·  '), pad + 12, 100);
+  g.fillStyle = '#FFFFFF'; g.font = '800 64px ' + FB; g.fillText('파크골프 경기 결과', pad + 12, 182);
+  g.fillStyle = C.mint; g.font = '700 30px ' + FB; g.fillText([r.group, cn.join('·') + '코스 ' + rk.total + '홀'].filter(Boolean).join('  ·  '), pad + 12, 234);
   var y = 314;
   if (!rk.rows.length){ g.fillStyle = C.muted; g.font = '500 34px ' + FB; g.fillText('입력된 점수가 없습니다', pad, y + 56); y += rowH; }
   rk.rows.forEach(function(x){
@@ -1056,55 +1081,170 @@ function drawImage(){
     g.fillStyle = first ? C.brassSoft : C.card; roundRect(g, pad - 16, y, W - (pad-16)*2, h, 28); g.fill();
     if (first){ g.strokeStyle = C.brass; g.lineWidth = 2; g.stroke(); }
     var mid = y + h/2;
-    g.fillStyle = first ? C.brass : C.bg; g.beginPath(); g.arc(pad + 40, mid, 30, 0, Math.PI*2); g.fill();
+    g.fillStyle = first ? C.brass : C.band; g.beginPath(); g.arc(pad + 40, mid, 30, 0, Math.PI*2); g.fill();
     g.fillStyle = first ? '#FFFFFF' : C.muted; g.font = '700 36px ' + FN; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(x.rank), pad + 40, mid + 2);
-    g.textAlign = 'left'; g.fillStyle = C.ink; g.font = '800 40px ' + FB; g.fillText(clip(g, pName(round,x.p), 520), pad + 100, mid + 2);
+    g.textAlign = 'left'; g.fillStyle = C.ink; g.font = '800 40px ' + FB; g.fillText(clip(g, pName(r,x.p), 520), pad + 100, mid + 2);
     g.textAlign = 'right'; g.font = '600 64px ' + FN; g.fillText(String(x.st.strokes), W - pad - 120, mid + 4);
     g.font = '600 38px ' + FN; g.fillStyle = x.st.tp > 0 ? C.over : (x.st.tp < 0 ? C.under : C.faint); g.fillText(tpPlain(x.st.tp), W - pad - 16, mid + 4);
     g.textAlign = 'left'; g.textBaseline = 'alphabetic';
     y += rowH;
   });
   y += 40;
-  var colW = (W - pad*2 - 150) / Math.max(1, round.nP);
-  g.font = '700 28px ' + FB; g.fillStyle = C.faint; g.fillText('코스', pad + 8, y + 40);
+  var colW = (W - pad*2 - 150) / Math.max(1, r.nP), base = y + 40;
+  g.font = '700 28px ' + FB; g.fillStyle = C.faint; g.fillText('코스', pad + 8, base);
   g.textAlign = 'center';
-  for (p=0;p<round.nP;p++){ g.fillStyle = C.ink; g.font = '800 30px ' + FB; g.fillText(clip(g, pName(round,p), colW - 12), pad + 150 + colW*p + colW/2, y + 40); }
-  y += tblRow;
-  for (c=0;c<=round.nC;c++){
-    var isTot = c === round.nC;
-    g.strokeStyle = isTot ? C.ink : C.hair; g.lineWidth = isTot ? 3 : 2; g.beginPath(); g.moveTo(pad, y - tblRow + 12); g.lineTo(W - pad, y - tblRow + 12); g.stroke();
-    g.textAlign = 'left'; g.fillStyle = C.muted; g.font = '700 30px ' + FB; g.fillText(isTot ? '총계' : cName(round,c), pad + 8, y - 12);
+  for (p=0;p<r.nP;p++){ g.fillStyle = C.ink; g.font = '800 30px ' + FB; g.fillText(clip(g, pName(r,p), colW - 12), pad + 150 + colW*p + colW/2, base); }
+  for (c=0;c<=r.nC;c++){
+    var isTot = c === r.nC, by = base + tblRow * (c + 1);
+    g.strokeStyle = isTot ? C.ink : C.hair; g.lineWidth = isTot ? 3 : 2; g.beginPath(); g.moveTo(pad, by - tblRow + 22); g.lineTo(W - pad, by - tblRow + 22); g.stroke();
+    g.textAlign = 'left'; g.fillStyle = C.muted; g.font = '700 30px ' + FB; g.fillText(isTot ? '총계' : cName(r,c), pad + 8, by);
     g.textAlign = 'center';
-    for (p=0;p<round.nP;p++){
+    for (p=0;p<r.nP;p++){
       var v = isTot ? (sts[p].played ? sts[p].strokes : '-') : (sts[p].course[c] ? sts[p].course[c].s : '-');
-      g.fillStyle = C.ink; g.font = (isTot ? '700 50px ' : '600 42px ') + FN; g.fillText(String(v), pad + 150 + colW*p + colW/2, y - 10);
+      g.fillStyle = C.ink; g.font = (isTot ? '700 50px ' : '600 42px ') + FN; g.fillText(String(v), pad + 150 + colW*p + colW/2, by + 2);
     }
-    y += tblRow;
+  }
+  y = base + tblRow * (r.nC + 1) + 24;
+  if (mode === 'all'){
+    var nameW = 176, sumW = 104, hw = (W - pad*2 - nameW - sumW) / 9, x0 = pad + nameW;
+    for (c=0;c<r.nC;c++){
+      var pars = r.courses[c].pars, sumPar = pars.reduce(function(a,b){ return a+b; },0);
+      y += 30;
+      g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = C.ink; g.font = '800 38px ' + FB; g.fillText(cName(r,c) + '코스', pad, y + 40);
+      g.textAlign = 'right'; g.fillStyle = C.faint; g.font = '600 32px ' + FN; g.fillText('PAR ' + sumPar, W - pad, y + 40);
+      y += 70;
+      var top = y, rows = r.nP + 2;
+      g.fillStyle = C.card; roundRect(g, pad - 16, top, W - (pad-16)*2, rows * holeRow + 8, 24); g.fill();
+      g.fillStyle = C.band; roundRect(g, pad - 16, top, W - (pad-16)*2, holeRow + 4, 24); g.fill(); g.fillRect(pad - 16, top + holeRow / 2, W - (pad-16)*2, holeRow / 2 + 4);
+      g.textBaseline = 'middle';
+      var cy = top + 4 + holeRow / 2, h;
+      g.textAlign = 'left'; g.fillStyle = C.faint; g.font = '700 28px ' + FB; g.fillText('홀', pad, cy);
+      g.textAlign = 'center'; g.fillStyle = C.ink; g.font = '700 32px ' + FN;
+      for (h=0;h<HOLES;h++) g.fillText(String(h+1), x0 + hw*h + hw/2, cy);
+      g.fillStyle = C.faint; g.font = '700 28px ' + FB; g.fillText('계', x0 + hw*9 + sumW/2, cy);
+      cy += holeRow;
+      g.textAlign = 'left'; g.fillStyle = C.faint; g.font = '700 28px ' + FB; g.fillText('파', pad, cy);
+      g.textAlign = 'center'; g.font = '600 32px ' + FN;
+      for (h=0;h<HOLES;h++) g.fillText(String(pars[h]), x0 + hw*h + hw/2, cy);
+      g.fillText(String(sumPar), x0 + hw*9 + sumW/2, cy);
+      for (p=0;p<r.nP;p++){
+        cy += holeRow;
+        g.strokeStyle = C.hair; g.lineWidth = 2; g.beginPath(); g.moveTo(pad - 4, cy - holeRow/2); g.lineTo(W - pad + 4, cy - holeRow/2); g.stroke();
+        g.textAlign = 'left'; g.fillStyle = C.ink; g.font = '800 30px ' + FB; g.fillText(clip(g, pName(r,p), nameW - 14), pad, cy);
+        for (h=0;h<HOLES;h++){
+          var s = r.scores[c][p][h], cx = x0 + hw*h + hw/2;
+          drawMark(g, s == null ? null : resultOf(s, pars[h]).k, s, cx, cy);
+          if (r.ob[c][p][h]){ g.fillStyle = C.over; roundRect(g, cx + 6, cy - 33, 30, 18, 5); g.fill(); g.fillStyle = '#FFFFFF'; g.font = '800 13px ' + FB; g.textAlign = 'center'; g.fillText('OB', cx + 21, cy - 23.5); }
+        }
+        var cs = sts[p].course[c];
+        g.textAlign = 'center'; g.fillStyle = C.ink; g.font = '700 38px ' + FN; g.fillText(cs ? String(cs.s) : '-', x0 + hw*9 + sumW/2, cy);
+      }
+      y = top + rows * holeRow + 8;
+    }
+    g.textBaseline = 'alphabetic';
   }
   g.textAlign = 'left'; g.fillStyle = C.faint; g.font = '700 26px ' + FB;
-  g.fillText('파크골프 스코어북' + (round.steps ? '   ·   걸음 ' + comma(round.steps) + '보' : ''), pad, H - 50);
+  g.fillText(APP_NAME + (r.steps ? '   ·   걸음 ' + comma(r.steps) + '보' : ''), pad, H - 50);
+  g.textAlign = 'right'; g.fillStyle = C.coffee; g.font = '800 26px ' + FB; g.fillText('☕ 만든이 ' + MAKER, W - pad, H - 50);
+  g.textAlign = 'left';
   return cv;
+}
+function drawMark(g, k, s, x, y){
+  var C = IMG, R = 25;
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 3;
+  if (s == null){ g.fillStyle = C.hair; g.font = '600 32px ' + FN; g.fillText('·', x, y); return; }
+  var color = C.ink;
+  if (k === 'ace'){ g.fillStyle = C.brass; g.beginPath(); g.arc(x, y, R, 0, Math.PI*2); g.fill(); color = '#FFFFFF'; }
+  else if (k === 'eagle' || k === 'birdie'){
+    color = C.under; g.strokeStyle = C.under;
+    g.beginPath(); g.arc(x, y, k === 'eagle' ? R : R - 2, 0, Math.PI*2); g.stroke();
+    if (k === 'eagle'){ g.beginPath(); g.arc(x, y, R - 7, 0, Math.PI*2); g.stroke(); }
+  }
+  else if (k === 'bogey' || k === 'double'){
+    color = C.over; g.strokeStyle = C.over;
+    var a = k === 'double' ? R : R - 2; g.strokeRect(x - a, y - a, a*2, a*2);
+    if (k === 'double') g.strokeRect(x - a + 7, y - a + 7, (a - 7)*2, (a - 7)*2);
+  }
+  g.fillStyle = color; g.font = (k === 'eagle' || k === 'double' ? '600 28px ' : '600 34px ') + FN; g.fillText(String(s), x, y + 1);
 }
 function clip(g, s, w){ if (g.measureText(s).width <= w) return s; while (s.length > 1 && g.measureText(s + '…').width > w) s = s.slice(0,-1); return s + '…'; }
 function roundRect(g, x, y, w, h, r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
-$('#imgBtn').addEventListener('click', function(){
-  var go = function(){
-    var cv = drawImage();
-    $('#sheetImg').src = cv.toDataURL('image/png');
-    lastBlob = null; if (cv.toBlob) cv.toBlob(function(b){ lastBlob = b; }, 'image/png');
-    $('#sheet').hidden = false; $('#sheetClose').focus();
-  };
+
+/* photo sheet: the PNG is ready before any button is pressed, so share/copy run inside the tap */
+var shot = { r:null, mode:'sum', url:'', blob:null };
+function dataUrlToBlob(u){ var b = atob(u.split(',')[1]), n = b.length, a = new Uint8Array(n); while (n--) a[n] = b.charCodeAt(n); return new Blob([a], { type:'image/png' }); }
+function shotName(){ return 'parknote-' + shot.r.date + (shot.mode === 'all' ? '-full' : '') + '.png'; }
+function renderShot(){
+  var cv = drawImage(shot.r, shot.mode);
+  shot.url = cv.toDataURL('image/png'); shot.blob = dataUrlToBlob(shot.url);
+  $('#sheetImg').src = shot.url;
+  var a = $('#saveImgBtn'); a.href = shot.url; a.setAttribute('download', shotName());
+  $$('#segShot button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.shot === shot.mode ? 'true' : 'false'); });
+}
+function openShot(r){
+  if (!hasScores(r)){ toast('보낼 점수가 없어요'); return; }
+  shot.r = r;
+  var go = function(){ renderShot(); openSheet('#sheet'); };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(go, go); else go();
-});
-$('#sheetClose').addEventListener('click', function(){ $('#sheet').hidden = true; });
-$('#sheet').addEventListener('click', function(e){ if (e.target === e.currentTarget) e.currentTarget.hidden = true; });
-$('#sheetShare').addEventListener('click', function(){
-  if (!lastBlob){ toast('이미지를 길게 눌러 저장해 주세요'); return; }
-  var file = new File([lastBlob], 'parkgolf-' + round.date + '.png', { type:'image/png' });
+}
+function copyImage(){
+  if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
+    navigator.clipboard.write([new ClipboardItem({ 'image/png': shot.blob })]).then(function(){
+      toast('사진을 복사했어요.\n카카오톡 대화창에 붙여넣기 하세요', 3200);
+    }, function(){ toast('사진 복사가 막혀 있어요.\n사진을 길게 눌러 저장한 뒤 보내세요', 3400); });
+  } else toast('이 브라우저는 사진 복사를 지원하지 않아요.\n사진을 길게 눌러 저장한 뒤 보내세요', 3400);
+}
+$('#segShot').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; shot.mode = b.dataset.shot; renderShot(); });
+$('#shareImgBtn').addEventListener('click', function(){
+  var file = new File([shot.blob], shotName(), { type:'image/png' });
   if (navigator.canShare && navigator.canShare({ files:[file] })){
-    navigator.share({ files:[file], title:'파크골프 경기 결과' }).catch(function(err){ if (!err || err.name !== 'AbortError') toast('공유를 열 수 없어요. 이미지를 길게 눌러 저장하세요', 3000); });
-  } else toast('이 브라우저는 이미지 공유를 지원하지 않아요.\n이미지를 길게 눌러 저장하세요', 3200);
+    // files only: some Android targets drop the photo when text or a title rides along
+    navigator.share({ files:[file] }).catch(function(err){ if (err && err.name === 'AbortError') return; copyImage(); });
+  } else copyImage();
 });
+$('#copyImgBtn').addEventListener('click', copyImage);
+$('#shareTxtBtn').addEventListener('click', function(){
+  var text = buildText(shot.r);
+  if (navigator.share){ navigator.share({ text: text }).catch(function(err){ if (err && err.name === 'AbortError') return; copyText(text); }); }
+  else copyText(text);
+});
+
+/* generic bottom sheets */
+function openSheet(id){ var s = $(id); s.hidden = false; var f = s.querySelector('[data-close]'); if (f) f.focus({ preventScroll:true }); }
+$$('.sheet').forEach(function(s){
+  s.addEventListener('click', function(e){ if (e.target === s || e.target.closest('[data-close]')) s.hidden = true; });
+});
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') $$('.sheet').forEach(function(s){ s.hidden = true; }); });
+
+/* home-screen shortcut */
+var installEvt = null;
+function isStandalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); installEvt = e; });
+window.addEventListener('appinstalled', function(){ installEvt = null; $('#installBtn').hidden = true; toast('홈 화면에 ' + APP_NAME + '를 추가했어요'); });
+function howtoSteps(){
+  var ua = navigator.userAgent || '';
+  if (/KAKAOTALK/i.test(ua)) return ['카카오톡 안에서는 홈 화면 추가가 안 돼요.', '오른쪽 아래(또는 위) <b>⋮</b> 메뉴 → <b>다른 브라우저로 열기</b>를 누르세요.', '새로 열린 화면에서 이 버튼을 다시 누르세요.'];
+  if (/iPhone|iPad|iPod/i.test(ua)) return ['화면 아래(또는 위)의 <b>공유 버튼</b>(네모에 위쪽 화살표)을 누르세요.', '목록을 올려 <b>홈 화면에 추가</b>를 누르세요.', '오른쪽 위 <b>추가</b>를 누르면 끝!'];
+  if (/SamsungBrowser/i.test(ua)) return ['화면 아래 <b>≡ 메뉴</b>를 누르세요.', '<b>현재 페이지 추가</b> → <b>홈 화면</b>을 누르세요.', '<b>추가</b>를 누르면 끝!'];
+  if (/Android/i.test(ua)) return ['오른쪽 위 <b>⋮ 메뉴</b>를 누르세요.', '<b>홈 화면에 추가</b>(또는 <b>앱 설치</b>)를 누르세요.', '<b>추가</b>(설치)를 누르면 끝!'];
+  return ['주소창 오른쪽의 <b>설치 아이콘</b>을 누르거나,', '브라우저 메뉴에서 <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누르세요.'];
+}
+$('#installBtn').addEventListener('click', function(){
+  if (installEvt){
+    var ev = installEvt; installEvt = null; ev.prompt();
+    if (ev.userChoice) ev.userChoice.then(function(c){ if (c && c.outcome === 'accepted') $('#installBtn').hidden = true; });
+    return;
+  }
+  $('#howto').innerHTML = howtoSteps().map(function(s){ return '<li>' + s + '</li>'; }).join('');
+  openSheet('#installSheet');
+});
+
+/* live clock in the header */
+function tickClock(){
+  var d = new Date(), h = d.getHours(), m = d.getMinutes();
+  $('#clockDate').textContent = fmtDate(ymd(d));
+  $('#clockTime').textContent = (h < 12 ? '오전 ' : '오후 ') + (h % 12 || 12) + ':' + pad(m);
+}
 
 /* ---------- history ---------- */
 var statPick = null;
@@ -1129,7 +1269,7 @@ function renderHist(){
     return '<div class="card hcard"><div class="dchip"><span>' + (d.getMonth()+1) + '월</span><b>' + d.getDate() + '</b><span>' + DOW[d.getDay()] + '</span></div>'
       + '<div class="hbody"><div class="where">' + (r.sample ? '<span class="tag">예시</span>' : '') + esc(r.venue || '구장 미입력') + '<small>' + esc([r.group, cn.join('·') + '코스', r.steps ? '걸음 ' + comma(r.steps) + '보' : ''].filter(Boolean).join(' · ')) + '</small></div>'
       + '<div class="pls">' + pls + '</div>'
-      + '<div class="hact"><button type="button" class="btn" data-load="' + i + '">불러오기</button><button type="button" class="btn warn" data-del="' + i + '">삭제</button></div></div></div>';
+      + '<div class="hact"><button type="button" class="btn kakao" data-shot-i="' + i + '">사진 보내기</button><button type="button" class="btn" data-load="' + i + '">불러오기</button><button type="button" class="btn warn" data-del="' + i + '">삭제</button></div></div></div>';
   }).join('');
 }
 function renderPersonal(){
@@ -1187,6 +1327,7 @@ function spark(list){
 $('#v-hist').addEventListener('click', function(e){
   var b = e.target.closest('button'); if (!b) return;
   if (b.dataset.stat != null){ statPick = b.dataset.stat; renderHist(); }
+  else if (b.dataset.shotI != null){ openShot(history[+b.dataset.shotI]); }
   else if (b.id === 'histSampleDel'){ history = history.filter(function(h){ return !h.sample; }); saveHist(); renderHist(); toast('예시 기록을 지웠어요'); }
   else if (b.dataset.del != null){ armed(b, '한 번 더 누르면 삭제', function(){ history.splice(+b.dataset.del, 1); saveHist(); renderHist(); toast('삭제했어요'); }); }
   else if (b.dataset.load != null){
@@ -1308,7 +1449,10 @@ function renderTab(){
 function renderAll(){ renderTop(); renderSetup(); renderTab(); }
 $$('.tab').forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
 $('#bigBtn').addEventListener('click', function(){ settings.big = !settings.big; saveSettings(); renderTop(); });
+$('#nightBtn').addEventListener('click', function(){ settings.night = !settings.night; saveSettings(); renderTop(); });
 
+$('#installBtn').hidden = isStandalone();
+tickClock(); setInterval(tickClock, 15000);
 var start = (location.hash || '').slice(1);
 renderTop(); renderSetup();
 $('#setup').open = !round.sample && !hasScores(round);

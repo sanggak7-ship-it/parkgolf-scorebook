@@ -1,6 +1,6 @@
 // 오프라인에서도 열리도록 앱 파일을 캐시합니다. 파일을 고치면 VERSION을 올리세요.
-const VERSION = 'pgsb-v2';
-const FILES = ['./', './index.html', './manifest.json', './icon.svg'];
+const VERSION = 'parknote-v3';
+const FILES = ['./', './index.html', './manifest.json', './icon.svg', './icon-180.png', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
