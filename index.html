@@ -15,9 +15,11 @@
 <meta name="apple-mobile-web-app-title" content="파크노트">
 <meta name="description" content="파크골프 점수 기록, 순위, 결과 사진·링크 보내기, 구장 날씨, 만보기">
 <meta property="og:type" content="website">
-<meta property="og:title" content="파크노트 - 파크골프 점수표">
-<meta property="og:description" content="링크를 누르면 경기 점수표를 볼 수 있어요. ☕ 커피향기 제작">
-<meta property="og:image" content="https://sanggak7-ship-it.github.io/parkgolf-scorebook/icon-512.png">
+<meta property="og:title" content="파크노트 - 파크골프 점수표 by 커피향기">
+<meta property="og:description" content="링크를 누르면 경기 점수표를 볼 수 있어요.">
+<meta property="og:image" content="https://sanggak7-ship-it.github.io/parkgolf-scorebook/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <!--/pwa-->
 <title>파크노트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,7 +114,7 @@ html.night .icon-btn .i-sun{display:block}
 .wx-main{min-width:0;display:grid;gap:.125rem}
 .wx-main b{font-size:1.0625rem;font-weight:800;line-height:1.2}
 .wx-main b .num{font-size:1.375rem;font-weight:700}
-.wx-main span{font-size:.8125rem;color:var(--ink-2);line-height:1.35}
+.wx-main>span{font-size:.8125rem;color:var(--ink-2);line-height:1.35}
 .wx-go{color:var(--ink-3)}
 .wx-now{display:flex;align-items:center;gap:1rem}
 .wx-big svg{width:4.5rem;height:4.5rem;display:block}
@@ -141,7 +143,7 @@ html.night .icon-btn .i-sun{display:block}
 .qr-head{display:flex;gap:.75rem;align-items:center}
 .qr-head>div{min-width:0}
 .qr-head b{display:block;font-weight:800;font-size:1rem}
-.qr-head span{display:block;font-size:.8125rem;color:var(--ink-2)}
+.qr-head>div>span{display:block;font-size:.8125rem;color:var(--ink-2)}
 .qr-box{background:#FFFFFF;border-radius:var(--r);padding:.5rem;display:grid;place-items:center;border:1px solid var(--hair)}
 .qr-box canvas{width:min(18rem,100%);height:auto;image-rendering:pixelated;display:block}
 .scan-box{position:relative;width:100%;max-width:20rem;aspect-ratio:1;justify-self:center;border-radius:var(--r);overflow:hidden;background:#000}
@@ -180,6 +182,8 @@ main{max-width:34rem;margin:0 auto;padding-inline:1rem;padding-block:1rem calc(7
 .btn:disabled{opacity:.4;cursor:default;box-shadow:none}
 .btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
 .btn-grid .full{grid-column:1/-1}
+.btn-grid.auto{grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr))}
+.btn{text-wrap:balance}
 .link-btn{background:none;border:0;padding:.25rem 0;color:var(--accent);font-weight:700}
 
 /* segmented control */
@@ -484,7 +488,7 @@ tfoot .num{font-size:1.375rem;font-weight:700}
         <span class="sum-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></span>
         <div><b>조원과 점수 합치기</b><span>각자 휴대폰에 입력한 점수를 QR 한 번으로 모아요</span></div>
       </div>
-      <div class="btn-grid">
+      <div class="btn-grid auto">
         <button class="btn" type="button" data-qr="show">내 QR 보여주기</button>
         <button class="btn pri" type="button" data-qr="scan">QR 찍어서 합치기</button>
       </div>
