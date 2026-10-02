@@ -1,0 +1,1323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--pwa-->
+<meta name="theme-color" content="#0F4630">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="스코어북">
+<!--/pwa-->
+<title>파크골프 스코어북</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;700;800&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: club scorecard. A pine-green hero carries the moment (course, hole, par); a quiet white player sheet sits below;
+   a floating glass tab bar sits in thumb reach. Golf notation on the card: circle = under par, square = over par, brass disc = hole-in-one. */
+:root{
+  --bg:#EDF1EC; --surface:#FFFFFF; --surface-2:#F2F5F1; --raise:#FFFFFF;
+  --ink:#0F1C15; --ink-2:#56645B; --ink-3:#8A968E; --hair:rgba(15,28,21,.09);
+  --accent:#1D7447; --accent-ink:#FFFFFF; --accent-soft:#E0EEE5;
+  --pine:#0F4630; --pine-2:#082B1D; --on-pine:#F3F8F4; --on-pine-2:rgba(243,248,244,.68); --on-pine-3:rgba(243,248,244,.13); --mint:#9BE3B9;
+  --brass:#A47E22; --brass-soft:#F5ECD6;
+  --under:#2460B0; --under-soft:#E3ECF8;
+  --over:#BE412E; --over-soft:#F9E5E0;
+  --shadow:0 1px 2px rgba(15,28,21,.05),0 12px 32px -16px rgba(15,28,21,.22);
+  --shadow-lg:0 2px 6px rgba(15,28,21,.06),0 28px 56px -24px rgba(15,28,21,.42);
+  --glass:rgba(255,255,255,.78);
+  --scrim:rgba(8,18,12,.42);
+  --f-ui:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --f-num:"Barlow Semi Condensed","Barlow","Roboto Condensed","Arial Narrow",sans-serif;
+  --r-lg:22px; --r:16px; --r-sm:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08100B; --surface:#111A15; --surface-2:#18231D; --raise:#26332C;
+    --ink:#E7EFE9; --ink-2:#9AA9A0; --ink-3:#6E7D74; --hair:rgba(255,255,255,.075);
+    --accent:#4FC487; --accent-ink:#04140B; --accent-soft:#15301F;
+    --pine:#123F2C; --pine-2:#0A2318;
+    --brass:#E0BC5C; --brass-soft:#2B2513;
+    --under:#83B3F3; --under-soft:#14233A;
+    --over:#F39482; --over-soft:#36201A;
+    --shadow:0 12px 32px -16px rgba(0,0,0,.75);
+    --shadow-lg:0 28px 56px -24px rgba(0,0,0,.85);
+    --glass:rgba(17,26,21,.8);
+    --scrim:rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08100B; --surface:#111A15; --surface-2:#18231D; --raise:#26332C;
+  --ink:#E7EFE9; --ink-2:#9AA9A0; --ink-3:#6E7D74; --hair:rgba(255,255,255,.075);
+  --accent:#4FC487; --accent-ink:#04140B; --accent-soft:#15301F;
+  --pine:#123F2C; --pine-2:#0A2318;
+  --brass:#E0BC5C; --brass-soft:#2B2513;
+  --under:#83B3F3; --under-soft:#14233A;
+  --over:#F39482; --over-soft:#36201A;
+  --shadow:0 12px 32px -16px rgba(0,0,0,.75);
+  --shadow-lg:0 28px 56px -24px rgba(0,0,0,.85);
+  --glass:rgba(17,26,21,.8);
+  --scrim:rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{font-size:100%;-webkit-text-size-adjust:100%}
+html.big{font-size:118.75%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:1rem;line-height:1.5;letter-spacing:-.01em;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2.5px solid var(--under);outline-offset:2px}
+h2,h3{margin:0;line-height:1.25;font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+h2{font-size:1.25rem}
+h3{font-size:1.0625rem}
+p{margin:0}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:0}
+.muted{color:var(--ink-2)}
+.small{font-size:.8125rem}
+.label{font-size:.75rem;font-weight:700;color:var(--ink-3);letter-spacing:.06em}
+.tp-pos{color:var(--over)} .tp-neg{color:var(--under)}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--glass);-webkit-backdrop-filter:saturate(1.6) blur(16px);backdrop-filter:saturate(1.6) blur(16px);border-bottom:1px solid var(--hair)}
+.top-in{max-width:34rem;margin:0 auto;padding:.625rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.brand{display:flex;align-items:center;gap:.625rem;min-width:0}
+.brand svg{flex:none;border-radius:10px;box-shadow:0 4px 12px -4px rgba(15,70,48,.6)}
+.brand>div{min-width:0}
+.brand h1{font-size:1.0625rem;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.2}
+.top-meta{font-size:.75rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill-btn{min-height:2.25rem;padding:0 .875rem;border-radius:999px;border:0;background:var(--surface-2);font-weight:700;font-size:.8125rem;white-space:nowrap;color:var(--ink-2)}
+.pill-btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+main{max-width:34rem;margin:0 auto;padding-inline:1rem;padding-block:1rem calc(7.25rem + env(safe-area-inset-bottom,0px))}
+.view{display:grid;gap:.875rem}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:1.125rem;box-shadow:var(--shadow);min-width:0}
+.stack{display:grid;gap:.75rem}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.row>*{min-width:0}
+.between{justify-content:space-between}
+
+/* buttons */
+.btn{min-height:3rem;padding:.5rem 1.125rem;border-radius:var(--r);border:0;background:var(--surface-2);color:var(--ink);font-weight:700;font-size:1rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;text-decoration:none;transition:transform .12s ease,background-color .2s ease,box-shadow .2s ease}
+.btn:active{transform:scale(.98)}
+.btn svg{width:1.125rem;height:1.125rem;flex:none}
+.btn.pri{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 22px -12px var(--accent)}
+.btn.warn{background:var(--over-soft);color:var(--over)}
+.btn.warn.armed{background:var(--over);color:var(--surface)}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.4;cursor:default;box-shadow:none}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.btn-grid .full{grid-column:1/-1}
+.link-btn{background:none;border:0;padding:.25rem 0;color:var(--accent);font-weight:700}
+
+/* segmented control */
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:3px;background:var(--surface-2);border-radius:14px;max-width:100%}
+.seg button{min-height:2.75rem;min-width:2.75rem;padding:0 .75rem;border:0;background:transparent;border-radius:11px;font-weight:700;font-size:1rem;color:var(--ink-2);transition:background-color .15s,color .15s}
+.seg button[aria-pressed="true"]{background:var(--raise);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08),0 3px 10px -4px rgba(0,0,0,.18)}
+.seg.full{display:grid;width:100%}
+.seg.num-seg button{font-family:var(--f-num);font-size:1.25rem;font-weight:600}
+
+/* fields */
+.field{display:grid;gap:.375rem;min-width:0}
+.inp{width:100%;min-height:3rem;padding:.5rem .875rem;border:1.5px solid transparent;border-radius:var(--r-sm);background:var(--surface-2);font-size:1.0625rem;transition:border-color .15s,background-color .15s}
+.inp::placeholder{color:var(--ink-3)}
+.inp:focus{border-color:var(--accent);background:var(--surface);outline:none}
+textarea.inp{min-height:4.5rem;resize:vertical;line-height:1.45}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.625rem}
+.venue-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
+.pin{position:relative}
+.pin .inp{padding-left:2.75rem}
+.pin .idx{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:1.5rem;height:1.5rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:.875rem;pointer-events:none}
+.chips{display:flex;gap:.375rem;flex-wrap:wrap}
+.chip{min-height:2.375rem;padding:0 .875rem;border-radius:999px;border:0;background:var(--surface-2);font-weight:500;font-size:.9375rem;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:700}
+
+/* notice */
+.notice{display:flex;gap:.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:.75rem .75rem .75rem 1rem;border-radius:var(--r);background:var(--brass-soft);font-size:.9375rem}
+.notice .btn{min-height:2.5rem;font-size:.9375rem}
+.tag{display:inline-block;font-size:.6875rem;font-weight:800;padding:.125rem .5rem;border-radius:999px;background:var(--brass);color:var(--surface);vertical-align:.1em;margin-right:.375rem;letter-spacing:.02em}
+
+/* setup */
+details.setup{padding:0}
+details.setup>summary{list-style:none;display:flex;align-items:center;gap:.75rem;cursor:pointer;padding:.875rem 1.125rem}
+details.setup>summary::-webkit-details-marker{display:none}
+.sum-ico{width:2.5rem;height:2.5rem;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.sum-ico svg{width:1.25rem;height:1.25rem}
+.sum-text{min-width:0;flex:1}
+.sum-text b{display:block;font-size:1rem;font-weight:800}
+.sum-text span{display:block;font-size:.8125rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.setup .chev{transition:transform .25s ease;flex:none;color:var(--ink-3)}
+details.setup[open] .chev{transform:rotate(180deg)}
+.setup-body{display:grid;gap:1.125rem;padding:1rem 1.125rem 1.25rem;border-top:1px solid var(--hair)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;isolation:isolate;border-radius:var(--r-lg);padding:1rem;color:var(--on-pine);background:radial-gradient(130% 90% at 100% 0%,rgba(155,227,185,.2),transparent 55%),linear-gradient(165deg,var(--pine),var(--pine-2));box-shadow:var(--shadow-lg)}
+.hero::before{content:"";position:absolute;right:-3.5rem;bottom:-4.5rem;width:15rem;height:15rem;border-radius:50%;border:1px solid var(--on-pine-3);box-shadow:0 0 0 2.25rem rgba(243,248,244,.035),0 0 0 4.5rem rgba(243,248,244,.025);z-index:-1}
+.hero button:focus-visible{outline-color:var(--mint)}
+.ctabs{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:.375rem}
+.ctab{min-height:3.25rem;border-radius:14px;border:0;background:var(--on-pine-3);color:var(--on-pine-2);display:grid;align-content:center;gap:.3rem;padding:.4rem .625rem;text-align:left;transition:background-color .2s,color .2s;min-width:0}
+.ctab b{font-size:.9375rem;font-weight:800;line-height:1.1;color:var(--on-pine);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctab .bar-t{display:flex;align-items:center;gap:.375rem;font-family:var(--f-num);font-size:.8125rem;line-height:1}
+.ctab .bar-t i{flex:1;height:3px;border-radius:3px;background:rgba(243,248,244,.18);position:relative;overflow:hidden}
+.ctab .bar-t i::after{content:"";position:absolute;left:0;top:0;bottom:0;width:calc(var(--p) * 100%);background:var(--mint);border-radius:3px}
+.ctab[aria-pressed="true"]{background:var(--on-pine);color:var(--pine)}
+.ctab[aria-pressed="true"] b{color:var(--pine)}
+.ctab[aria-pressed="true"] .bar-t i{background:rgba(15,70,48,.15)}
+.ctab[aria-pressed="true"] .bar-t i::after{background:var(--pine)}
+.hmid{display:flex;align-items:flex-end;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin:1.125rem 0 1rem}
+.hole-big{display:flex;align-items:flex-end;gap:.5rem}
+.hole-big .num{font-size:4.75rem;font-weight:600;line-height:.8;letter-spacing:-.03em}
+.hole-big .unit{padding-bottom:.25rem}
+.hole-big .unit b{display:block;font-size:1.125rem;font-weight:800;line-height:1.1}
+.hole-big .unit span{font-size:.8125rem;color:var(--on-pine-2)}
+.par-pick{display:grid;gap:.3rem;justify-items:end}
+.par-pick .label{color:var(--on-pine-2)}
+.seg.dark{background:var(--on-pine-3)}
+.seg.dark button{color:var(--on-pine-2);font-family:var(--f-num);font-size:1.25rem;font-weight:600;min-width:2.75rem}
+.seg.dark button[aria-pressed="true"]{background:var(--on-pine);color:var(--pine);box-shadow:0 4px 14px -6px rgba(0,0,0,.5)}
+.hstrip{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.3rem}
+.hbtn{position:relative;min-height:2.375rem;border-radius:10px;border:1px solid var(--on-pine-3);background:transparent;color:var(--on-pine-2);font-family:var(--f-num);font-size:1.0625rem;font-weight:600;padding:0;transition:background-color .15s}
+.hbtn.done{background:rgba(155,227,185,.2);border-color:transparent;color:var(--mint)}
+.hbtn.part::after{content:"";position:absolute;left:50%;bottom:3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--mint)}
+.hbtn[aria-current="true"]{background:var(--on-pine);border-color:var(--on-pine);color:var(--pine)}
+
+/* player sheet */
+.psheet{padding:.25rem 1rem}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:.5rem;padding:.75rem 0}
+.prow+.prow{border-top:1px solid var(--hair)}
+.pname{min-width:0}
+.pname b{display:block;font-size:1.0625rem;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+.pname>span{display:block;font-size:.8125rem;color:var(--ink-3);margin-top:.125rem;white-space:nowrap}
+.pname>span .num{font-size:.9375rem;color:var(--ink-2);font-weight:600}
+.stepper{display:grid;grid-template-columns:2.75rem 4.125rem 2.75rem;gap:2px;padding:3px;background:var(--surface-2);border-radius:var(--r)}
+.stepper button{min-height:3.25rem;border:0;border-radius:13px;background:transparent;color:var(--ink-2);font-size:1.5rem;font-weight:500;padding:0;transition:background-color .15s,transform .1s}
+.stepper button:active{transform:scale(.94)}
+.stepper .st-val{display:grid;place-items:center;align-content:center;gap:3px;background:var(--raise);color:var(--ink);font-family:var(--f-num);font-size:1.875rem;font-weight:600;line-height:.9;box-shadow:0 1px 2px rgba(0,0,0,.06),0 4px 12px -6px rgba(0,0,0,.18)}
+.st-val small{font-family:var(--f-ui);font-size:.625rem;font-weight:800;line-height:1;letter-spacing:.02em}
+.stepper .st-val.ghost{background:transparent;color:var(--ink-3);box-shadow:inset 0 0 0 1.5px var(--hair);font-weight:500}
+.st-val.ghost small{font-weight:600}
+.stepper .st-val.v-ace{background:var(--brass);color:var(--surface)}
+.stepper .st-val.v-eagle{background:var(--under);color:var(--surface)}
+.stepper .st-val.v-birdie{background:var(--under-soft);color:var(--under)}
+.stepper .st-val.v-bogey{background:var(--over-soft);color:var(--over)}
+.stepper .st-val.v-double{background:var(--over);color:var(--surface)}
+.ob-btn{min-height:3.5rem;width:2.875rem;border-radius:var(--r);border:0;background:var(--surface-2);color:var(--ink-3);font-weight:800;font-size:.75rem;letter-spacing:.04em;padding:0}
+.ob-btn[aria-pressed="true"]{background:var(--over);color:var(--surface)}
+.hnav{display:grid;grid-template-columns:1fr 2fr;gap:.5rem}
+.hnav .btn{min-height:3.5rem;font-size:1.0625rem;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--hair)}
+.hnav .btn.pri{background:var(--accent);border-color:transparent;box-shadow:0 12px 24px -12px var(--accent)}
+.hnav .btn.pri.ready{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{box-shadow:0 0 0 6px var(--accent-soft),0 12px 24px -12px var(--accent)}}
+
+/* live board */
+.live{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr));gap:.5rem}
+.live-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.5rem;padding:.625rem .75rem;border-radius:var(--r);background:var(--surface);border:1px solid var(--hair)}
+.rk{width:1.75rem;height:1.75rem;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--ink-2);font-family:var(--f-num);font-weight:700;font-size:.9375rem}
+.rk.r1{background:var(--brass);color:var(--surface)}
+.live-item b{font-size:.9375rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-item .sc{font-family:var(--f-num);font-weight:600;font-size:1.25rem;line-height:1;text-align:right}
+.live-item .sc small{display:block;font-size:.8125rem;font-weight:600}
+
+/* scorecard */
+.legend{display:flex;gap:.5rem .875rem;flex-wrap:wrap;font-size:.8125rem;color:var(--ink-2);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:.375rem}
+.legend .mk{width:1.5rem;height:1.5rem;font-size:.9375rem}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);background:var(--surface);border:1px solid var(--hair)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:.375rem .25rem;text-align:center;border-bottom:1px solid var(--hair);white-space:nowrap}
+thead th{font-size:.75rem;color:var(--ink-3);font-weight:700;background:var(--surface-2);padding:.5rem .375rem;letter-spacing:.02em}
+thead th.pl{color:var(--ink);font-size:.8125rem;font-weight:800;max-width:5.5rem;overflow:hidden;text-overflow:ellipsis}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}
+tbody th{font-weight:700;font-size:.875rem;color:var(--ink-2)}
+td.hole{font-family:var(--f-num);font-weight:700;font-size:1.0625rem;width:2.25rem}
+td.par{font-family:var(--f-num);color:var(--ink-3);font-size:1rem;width:2rem}
+td.cur{background:var(--accent-soft);color:var(--accent)}
+tfoot td,tfoot th{border-top:1.5px solid var(--ink);border-bottom:0;font-weight:800;padding:.625rem .25rem;font-size:.875rem}
+tfoot .num{font-size:1.375rem;font-weight:700}
+.cellbtn{position:relative;width:100%;min-height:2.75rem;background:none;border:0;display:grid;place-items:center;padding:0;border-radius:8px}
+.mk{display:inline-grid;place-items:center;width:2rem;height:2rem;font-family:var(--f-num);font-size:1.3125rem;font-weight:600;line-height:1;font-style:normal}
+.mk.empty{color:var(--ink-3);opacity:.5}
+.mk.birdie{border:1.5px solid var(--under);border-radius:50%;color:var(--under)}
+.mk.eagle{border-radius:50%;color:var(--under);box-shadow:0 0 0 1.5px var(--under),0 0 0 3.5px var(--surface),0 0 0 5px var(--under)}
+.mk.ace{border-radius:50%;background:var(--brass);color:var(--surface)}
+.mk.bogey{border:1.5px solid var(--over);border-radius:3px;color:var(--over)}
+.mk.double{border-radius:3px;color:var(--over);box-shadow:0 0 0 1.5px var(--over),0 0 0 3.5px var(--surface),0 0 0 5px var(--over)}
+.ob-tag{position:absolute;top:2px;right:2px;font-size:.5625rem;font-weight:800;color:var(--surface);background:var(--over);border-radius:4px;padding:0 3px;line-height:1.35;font-style:normal}
+.course-h{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;padding:0 .25rem}
+
+/* results */
+.res-hero{display:grid;gap:.875rem}
+.res-hero .meta{font-size:.8125rem;color:var(--on-pine-2)}
+.res-hero h2{font-size:1.375rem;color:var(--on-pine)}
+.winner{display:flex;align-items:center;gap:.875rem;padding:.875rem;border-radius:var(--r);background:var(--on-pine-3)}
+.winner .crown{width:2.75rem;height:2.75rem;border-radius:50%;background:var(--brass);color:#FFFFFF;display:grid;place-items:center;flex:none}
+.winner .crown svg{width:1.375rem;height:1.375rem}
+.winner>div{min-width:0}
+.winner b{display:block;font-size:1.25rem;font-weight:800;line-height:1.2;overflow-wrap:anywhere}
+.winner span{font-size:.8125rem;color:var(--on-pine-2)}
+.winner .sc{margin-left:auto;text-align:right;font-family:var(--f-num);line-height:1;flex:none}
+.winner .sc b{font-size:2.5rem;font-weight:600}
+.winner .sc span{font-size:1rem;font-weight:600;color:var(--mint)}
+.lb{display:grid;gap:.5rem}
+.lb-row{display:grid;grid-template-columns:2.75rem minmax(0,1fr) auto;align-items:center;gap:.875rem;padding:.75rem .875rem;border-radius:var(--r);background:var(--surface);border:1px solid var(--hair)}
+.medal{width:2.75rem;height:2.75rem;border-radius:50%;display:grid;place-items:center;align-content:center;background:var(--surface-2);color:var(--ink-2);font-family:var(--f-num);font-weight:700;font-size:1.25rem;line-height:1}
+.medal small{font-family:var(--f-ui);font-size:.5625rem;font-weight:800;margin-top:1px}
+.lb-row.first{border-color:var(--brass);background:linear-gradient(120deg,var(--brass-soft),var(--surface) 75%)}
+.lb-row.first .medal{background:var(--brass);color:var(--surface)}
+.lb-name b{display:block;font-weight:800;font-size:1.0625rem;overflow-wrap:anywhere;line-height:1.25}
+.lb-name span{display:block;font-size:.8125rem;color:var(--ink-3);margin-top:.125rem}
+.lb-score{text-align:right;line-height:1}
+.lb-score .num{font-size:2rem;font-weight:600}
+.lb-score .tp{display:block;font-family:var(--f-num);font-size:1rem;font-weight:600;margin-top:.25rem}
+.empty-note{padding:1.5rem 1rem;text-align:center;color:var(--ink-2);border-radius:var(--r);background:var(--surface-2);font-size:.9375rem}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(6rem,1fr));gap:.5rem}
+.kv div{padding:.75rem .875rem;border-radius:var(--r-sm);background:var(--surface-2);min-width:0}
+.kv span{display:block;font-size:.75rem;color:var(--ink-3);font-weight:700}
+.kv b{display:block;font-family:var(--f-num);font-size:1.625rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kv b small{font-family:var(--f-ui);font-size:.75rem;font-weight:500;color:var(--ink-2);margin-left:.125rem}
+
+/* history */
+.hcard{display:grid;grid-template-columns:3.25rem minmax(0,1fr);gap:.875rem;padding:1rem}
+.dchip{border-radius:var(--r-sm);background:var(--surface-2);text-align:center;padding:.375rem 0;align-self:start;line-height:1.1}
+.dchip span{display:block;font-size:.6875rem;font-weight:700;color:var(--ink-3)}
+.dchip b{display:block;font-family:var(--f-num);font-size:1.625rem;font-weight:600}
+.hbody{display:grid;gap:.5rem;min-width:0}
+.hbody .where{font-weight:800;font-size:1rem;overflow-wrap:anywhere}
+.hbody .where small{display:block;font-weight:500;font-size:.8125rem;color:var(--ink-3)}
+.pls{display:flex;flex-wrap:wrap;gap:.25rem .875rem;font-size:.9375rem}
+.pls .num{font-size:1.125rem;font-weight:600}
+.pls .win{font-weight:800}
+.pls .win::before{content:"";display:inline-block;width:.5rem;height:.5rem;border-radius:50%;background:var(--brass);margin-right:.375rem;vertical-align:.1em}
+.hact{display:flex;gap:.375rem;flex-wrap:wrap}
+.hact .btn{min-height:2.5rem;font-size:.9375rem;padding:.25rem .875rem}
+.spark{width:100%;height:auto;display:block}
+.spark text{font-family:var(--f-num);font-size:12px;fill:var(--ink-3)}
+
+/* steps */
+.step-hero{display:grid;gap:1rem;justify-items:center;text-align:center}
+.step-hero .head{width:100%;display:flex;justify-content:space-between;align-items:center}
+.step-hero .head h2{color:var(--on-pine)}
+.step-hero .head span{font-size:.8125rem;color:var(--on-pine-2)}
+.ring-wrap{position:relative;width:min(14.5rem,100%);aspect-ratio:1;max-width:100%}
+.ring-wrap svg{width:100%;height:100%;display:block;transform:rotate(-90deg)}
+.ring-track{stroke:var(--on-pine-3)}
+.ring-bar{transition:stroke-dashoffset .5s ease}
+.rg-a{stop-color:var(--mint)} .rg-b{stop-color:#FFFFFF}
+.ring-c{position:absolute;inset:0;display:grid;place-items:center;align-content:center}
+.ring-c .label{color:var(--on-pine-2)}
+.ring-c .num{font-size:3.5rem;font-weight:600;line-height:1;color:var(--on-pine)}
+.ring-c span:last-child{font-size:.8125rem;color:var(--on-pine-2)}
+.step-hero .btn{width:100%;min-height:3.5rem;font-size:1.125rem;background:var(--on-pine);color:var(--pine);box-shadow:0 12px 24px -12px rgba(0,0,0,.6)}
+.step-hero .btn.stop{background:var(--on-pine-3);color:var(--on-pine);box-shadow:none}
+.status{display:flex;align-items:flex-start;gap:.5rem;justify-content:center;font-size:.875rem;color:var(--on-pine-2);text-align:left;max-width:22rem}
+.status i{width:.5rem;height:.5rem;border-radius:50%;background:var(--on-pine-2);flex:none;margin-top:.45em}
+.status.on{color:var(--on-pine)} .status.on i{background:var(--mint);box-shadow:0 0 0 4px rgba(155,227,185,.25);animation:pulse 1.4s infinite}
+.status.err{color:#FFC9BE} .status.err i{background:#FF9C88}
+@keyframes pulse{50%{opacity:.35}}
+.bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem;height:9rem;position:relative;padding-top:1.25rem}
+.bar{position:relative;height:100%;min-width:0}
+.bar span{position:absolute;left:-.25rem;right:-.25rem;text-align:center;font-family:var(--f-num);font-size:.75rem;color:var(--ink-2);line-height:1.2;white-space:nowrap}
+.bar i{position:absolute;bottom:0;left:18%;right:18%;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}
+.bar.today i{background:var(--pine);opacity:1}
+.bar.zero i{background:var(--hair);opacity:1}
+.bar-x{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem;text-align:center;font-size:.75rem;color:var(--ink-3);border-top:1px solid var(--hair);padding-top:.375rem;font-weight:700}
+.goal-line{position:absolute;left:0;right:0;border-top:1.5px dashed var(--ink-3);pointer-events:none;opacity:.6}
+.goal-line span{position:absolute;left:0;top:-.55rem;line-height:1;font-size:.6875rem;color:var(--ink-2);background:var(--surface);padding:0 .25rem 0 0;font-weight:700}
+
+/* floating tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:0 .75rem calc(.625rem + env(safe-area-inset-bottom,0px));pointer-events:none}
+.tabs-in{pointer-events:auto;max-width:32rem;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:.375rem;background:var(--glass);-webkit-backdrop-filter:saturate(1.8) blur(20px);backdrop-filter:saturate(1.8) blur(20px);border:1px solid var(--hair);border-radius:24px;box-shadow:var(--shadow-lg)}
+.tab{min-height:3.375rem;border:0;border-radius:18px;background:none;display:grid;place-items:center;align-content:center;gap:.125rem;font-size:.75rem;font-weight:700;color:var(--ink-3);padding:.25rem 0;transition:background-color .2s,color .2s}
+.tab svg{width:1.375rem;height:1.375rem}
+.tab[aria-selected="true"]{color:var(--accent);background:var(--accent-soft)}
+
+/* bottom sheet + toast */
+.sheet{position:fixed;inset:0;z-index:50;background:var(--scrim);display:grid;align-items:end;justify-items:center;padding:1rem;padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px))}
+.sheet-in{background:var(--surface);border-radius:26px;padding:.75rem 1.125rem 1.125rem;width:100%;max-width:32rem;max-height:calc(100% - 2rem);overflow:auto;display:grid;gap:.75rem;box-shadow:var(--shadow-lg)}
+.sheet-in .grab{width:2.5rem;height:4px;border-radius:4px;background:var(--hair);justify-self:center}
+.sheet-in img{width:100%;border-radius:var(--r);border:1px solid var(--hair)}
+.toast{position:fixed;left:50%;bottom:calc(6.75rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(.75rem);background:var(--ink);color:var(--bg);padding:.75rem 1.125rem;border-radius:999px;font-weight:700;font-size:.9375rem;max-width:calc(100% - 2rem);width:max-content;opacity:0;pointer-events:none;transition:opacity .2s,transform .25s;z-index:60;text-align:center;white-space:pre-line;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.credit{font-size:.75rem;color:var(--ink-3);text-align:center;margin-top:1.5rem;line-height:1.7}
+.credit a{color:inherit}
+@media (max-width:380px){
+  .stepper{grid-template-columns:2.5rem 3.625rem 2.5rem}
+  .ob-btn{width:2.5rem}
+  .psheet{padding:.25rem .75rem}
+  .hole-big .num{font-size:4rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="bgr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D7447"/><stop offset="1" stop-color="#082B1D"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#bgr)"/><path d="M14 27V9l10 4.2L14 17.4" fill="none" stroke="#F3F8F4" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="17.5" cy="27" rx="6.5" ry="1.7" fill="#9BE3B9" opacity=".8"/></svg>
+      <div><h1>파크골프 스코어북</h1><div id="topMeta" class="top-meta"></div></div>
+    </div>
+    <button id="bigBtn" class="pill-btn" type="button" aria-pressed="false">큰 글씨</button>
+  </div>
+</header>
+
+<main>
+  <!-- 경기 입력 -->
+  <section id="v-play" class="view" aria-label="경기 입력">
+    <div id="sampleBanner" class="notice" hidden>
+      <span><span class="tag">예시</span>둘러본 뒤 새 경기를 시작하세요.</span>
+      <button id="sampleNew" class="btn pri" type="button">새 경기 시작</button>
+    </div>
+
+    <div class="hero" id="holeHero">
+      <div id="ctabs" class="ctabs"></div>
+      <div class="hmid">
+        <div class="hole-big"><span id="hNum" class="num">1</span><div class="unit"><b>번 홀</b><span id="hCourse"></span></div></div>
+        <div class="par-pick"><span class="label">PAR</span><div id="parSeg" class="seg dark" role="group" aria-label="이 홀의 파"></div></div>
+      </div>
+      <div id="hstrip" class="hstrip"></div>
+    </div>
+
+    <div class="card psheet" id="players"></div>
+
+    <div class="hnav">
+      <button id="prevBtn" class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>이전</button>
+      <button id="nextBtn" class="btn pri" type="button">다음 홀</button>
+    </div>
+
+    <div class="stack" style="gap:.5rem">
+      <span class="label">실시간 순위</span>
+      <div id="mini" class="live"></div>
+    </div>
+
+    <details id="setup" class="card setup">
+      <summary>
+        <span class="sum-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>
+        <span class="sum-text"><b>경기 설정</b><span id="setupSum"></span></span>
+        <svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="setup-body">
+        <div class="two">
+          <div class="field"><label class="label" for="fDate">날짜</label><input id="fDate" class="inp" type="date"></div>
+          <div class="field"><label class="label" for="fGroup">조(팀) 이름</label><input id="fGroup" class="inp" type="text" placeholder="예: 3조" autocomplete="off"></div>
+        </div>
+        <div class="field">
+          <label class="label" for="fVenue">구장</label>
+          <div class="venue-row">
+            <input id="fVenue" class="inp" type="text" placeholder="예: 망원 파크골프장" list="venueList" autocomplete="off">
+            <a id="mapLink" class="btn" href="https://map.naver.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>지도</a>
+          </div>
+          <datalist id="venueList"></datalist>
+          <div class="row between">
+            <span id="venueHint" class="small muted"></span>
+            <button id="venueSave" class="link-btn small" type="button">이 구장 코스·파 저장</button>
+          </div>
+        </div>
+        <div class="field"><span class="label">인원</span><div id="segPlayers" class="seg full num-seg" role="group" aria-label="인원"></div></div>
+        <div class="field"><span class="label">코스 수 · 코스당 9홀</span><div id="segCourses" class="seg full num-seg" role="group" aria-label="코스 수"></div></div>
+        <div class="field"><span class="label">코스 이름</span><div id="courseNames" class="two"></div></div>
+        <div class="field">
+          <span class="label">경기자 이름</span>
+          <div id="playerInputs" class="stack" style="gap:.5rem"></div>
+          <div id="nameChipsWrap" class="stack" style="gap:.5rem" hidden>
+            <span class="small muted">최근 이름 · 누르면 빈 칸에 들어갑니다</span>
+            <div id="nameChips" class="chips"></div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- 점수표 -->
+  <section id="v-card" class="view" aria-label="점수표" hidden>
+    <div class="row between"><h2>코스별 점수표</h2><span class="small muted">칸을 누르면 그 홀로 이동</span></div>
+    <div class="legend">
+      <span><i class="mk ace">1</i>홀인원</span>
+      <span><i class="mk eagle">2</i>이글</span>
+      <span><i class="mk birdie">3</i>버디</span>
+      <span><i class="mk bogey">5</i>보기</span>
+      <span><i class="mk double">6</i>더블+</span>
+      <span><i class="ob-tag" style="position:static">OB</i>OB·벌타</span>
+    </div>
+    <div id="cardTables" class="stack" style="gap:1.25rem"></div>
+  </section>
+
+  <!-- 결과 -->
+  <section id="v-result" class="view" aria-label="결과" hidden>
+    <div class="hero res-hero">
+      <div><div id="resMeta" class="meta"></div><h2>오늘의 경기 결과</h2></div>
+      <div id="winner"></div>
+    </div>
+    <div class="card stack">
+      <div class="row between">
+        <h3>순위</h3>
+        <div id="segTie" class="seg" role="group" aria-label="동점 처리">
+          <button type="button" data-tie="shared">공동 순위</button>
+          <button type="button" data-tie="countback">백카운트</button>
+        </div>
+      </div>
+      <p id="tieHelp" class="small muted"></p>
+      <div id="leader" class="lb"></div>
+    </div>
+    <div class="card stack">
+      <h3>코스별 합계</h3>
+      <div class="tbl-wrap"><table id="sumTable"></table></div>
+    </div>
+    <div class="card stack">
+      <h3>기록 내용</h3>
+      <div class="tbl-wrap"><table id="statTable"></table></div>
+      <div id="roundSteps" class="small muted"></div>
+    </div>
+    <div class="card stack">
+      <div class="field"><label class="label" for="fNote">참고 메모</label><textarea id="fNote" class="inp" placeholder="날씨, 내기, 특이사항 등"></textarea></div>
+      <div class="btn-grid">
+        <button id="saveBtn" class="btn pri full" type="button">기록 저장</button>
+        <button id="shareBtn" class="btn" type="button">결과 공유</button>
+        <button id="copyBtn" class="btn" type="button">텍스트 복사</button>
+        <button id="imgBtn" class="btn full" type="button">결과 이미지 만들기</button>
+        <button id="newBtn" class="btn warn full" type="button">새 경기 시작</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 기록 -->
+  <section id="v-hist" class="view" aria-label="기록" hidden>
+    <div id="histSample" class="notice" hidden>
+      <span><span class="tag">예시</span>예시 기록입니다. 첫 경기를 저장하면 사라집니다.</span>
+      <button id="histSampleDel" class="btn" type="button">예시 지우기</button>
+    </div>
+    <div class="card stack">
+      <h2>개인 통계</h2>
+      <div id="statChips" class="chips"></div>
+      <div id="statBody" class="stack"></div>
+    </div>
+    <div class="row between" style="padding:0 .25rem"><h2>저장된 경기</h2><span id="histCount" class="small muted"></span></div>
+    <div id="histList" class="stack" style="gap:.625rem"></div>
+  </section>
+
+  <!-- 만보기 -->
+  <section id="v-steps" class="view" aria-label="만보기" hidden>
+    <div class="hero step-hero">
+      <div class="head"><h2>만보기</h2><span id="stepDate"></span></div>
+      <div class="ring-wrap">
+        <svg viewBox="0 0 220 220" aria-hidden="true"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop class="rg-a" offset="0"/><stop class="rg-b" offset="1"/></linearGradient></defs><circle class="ring-track" cx="110" cy="110" r="96" fill="none" stroke-width="14"/><circle id="ringBar" class="ring-bar" cx="110" cy="110" r="96" fill="none" stroke="url(#rg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="603.19" stroke-dashoffset="603.19"/></svg>
+        <div class="ring-c"><span class="label">오늘 걸음</span><b id="stepNum" class="num">0</b><span id="stepGoalTxt">목표 10,000보</span></div>
+      </div>
+      <button id="pedoBtn" class="btn" type="button">걸음 측정 시작</button>
+      <p id="pedoStatus" class="status"><i></i><span>측정 전입니다. 휴대폰을 주머니나 손에 들고 걸으세요.</span></p>
+    </div>
+    <div class="card stack">
+      <div class="kv">
+        <div><span>거리</span><b id="stepKm">0.00<small>km</small></b></div>
+        <div><span>소모 열량</span><b id="stepKcal">0<small>kcal</small></b></div>
+        <div><span>걸은 시간</span><b id="stepMin">0<small>분</small></b></div>
+      </div>
+      <p class="small muted">브라우저에서는 화면이 켜져 있는 동안만 걸음을 셉니다. 측정 중에는 화면 꺼짐을 막아 둡니다. 경기 중 걸음은 이번 라운드 기록에도 함께 저장됩니다.</p>
+    </div>
+    <div class="card stack">
+      <h3>최근 7일</h3>
+      <div id="weekBars"></div>
+    </div>
+    <div class="card stack">
+      <h3>직접 입력 · 설정</h3>
+      <div class="field">
+        <label class="label" for="addSteps">휴대폰 건강 앱의 걸음 수 더하기</label>
+        <div class="venue-row"><input id="addSteps" class="inp num" type="number" inputmode="numeric" min="1" max="100000" placeholder="예: 3500"><button id="addStepsBtn" class="btn pri" type="button">더하기</button></div>
+      </div>
+      <div class="two">
+        <div class="field"><label class="label" for="fStride">보폭 (cm)</label><input id="fStride" class="inp num" type="number" inputmode="numeric" min="30" max="120"></div>
+        <div class="field"><label class="label" for="fGoal">하루 목표 (보)</label><input id="fGoal" class="inp num" type="number" inputmode="numeric" min="1000" max="50000" step="500"></div>
+      </div>
+      <div class="field"><span class="label">감도</span>
+        <div id="segSens" class="seg full" role="group" aria-label="감도">
+          <button type="button" data-sens="low">둔하게</button><button type="button" data-sens="mid">보통</button><button type="button" data-sens="high">예민하게</button>
+        </div>
+      </div>
+      <button id="stepReset" class="btn warn" type="button">오늘 걸음 0으로</button>
+    </div>
+  </section>
+
+  <p class="credit">점수표 구성은 <a href="https://github.com/leejh50-dotcom/parkgolf-score" target="_blank" rel="noopener">파시스 sv2.1</a>(MIT)을 참고해 새로 만들었습니다.<br>데이터는 이 기기 브라우저에만 저장됩니다.</p>
+</main>
+
+<nav class="tabs" aria-label="화면 전환">
+  <div class="tabs-in" role="tablist">
+    <button class="tab" role="tab" data-tab="play" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21V3l11 4.5L7 12"/></svg>입력</button>
+    <button class="tab" role="tab" data-tab="card" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M3 15h18M9 4v16"/></svg>점수표</button>
+    <button class="tab" role="tab" data-tab="result" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.5a2.5 2.5 0 0 0 3.5 3.5M16 6h3.5A2.5 2.5 0 0 1 16 9.5M12 13v4M8 20h8"/></svg>결과</button>
+    <button class="tab" role="tab" data-tab="hist" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M21 19H3"/></svg>기록</button>
+    <button class="tab" role="tab" data-tab="steps" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3c2 0 3 2 3 5s-1 5-3 5-3-2-3-5 1-5 3-5zM6 16.5h4V19a2 2 0 0 1-4 0zM16 7c2 0 3 2 3 5s-1 5-3 5-3-2-3-5 1-5 3-5zM14 20.5h4"/></svg>만보기</button>
+  </div>
+</nav>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="결과 이미지">
+    <span class="grab" aria-hidden="true"></span>
+    <div class="row between"><h3>결과 이미지</h3><button id="sheetClose" class="pill-btn" type="button">닫기</button></div>
+    <img id="sheetImg" alt="경기 결과 이미지">
+    <p class="small muted">이미지를 길게 누르면 사진첩에 저장하거나 카카오톡으로 보낼 수 있어요.</p>
+    <button id="sheetShare" class="btn pri wide" type="button">이미지 공유</button>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s, el){ return Array.prototype.slice.call((el||document).querySelectorAll(s)); };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var store = {
+  get: function(k, d){ try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set: function(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+var K = { round:'pgsb_round', hist:'pgsb_history', names:'pgsb_names', venues:'pgsb_venues', set:'pgsb_settings', steps:'pgsb_steps', tab:'pgsb_tab' };
+var MAXP = 6, MAXC = 4, HOLES = 9;
+var LETTERS = ['A','B','C','D'];
+var DEFAULT_PARS = [3,4,3,4,5,3,4,3,4];
+var DOW = ['일','월','화','수','목','금','토'];
+var ICON_NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+
+function pad(n){ return (n < 10 ? '0' : '') + n; }
+function ymd(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function today(){ return ymd(new Date()); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function parseYmd(s){ var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function fmtDate(s){ if(!s) return ''; var d = parseYmd(s); return (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + DOW[d.getDay()] + ')'; }
+function comma(n){ return Math.round(n).toLocaleString('ko-KR'); }
+function grid(fill){ var a = []; for (var c=0;c<MAXC;c++){ var pc=[]; for (var p=0;p<MAXP;p++){ var h=[]; for (var i=0;i<HOLES;i++) h.push(fill); pc.push(h);} a.push(pc);} return a; }
+function tpText(d){ return d === 0 ? 'E' : (d > 0 ? '+' + d : '−' + Math.abs(d)); }
+function tpPlain(d){ return d === 0 ? 'E' : (d > 0 ? '+' + d : String(d)); }
+function tpCls(d){ return d > 0 ? 'tp-pos' : (d < 0 ? 'tp-neg' : ''); }
+
+function makeRound(prev){
+  var r = {
+    id: uid(), date: today(), venue: '', group: '', nP: 4, nC: 2,
+    players: [], courses: [], scores: grid(null), ob: grid(0), note: '', steps: 0, sample: false, cur: { c:0, h:0 }
+  };
+  for (var p=0;p<MAXP;p++) r.players.push({ name: '' });
+  for (var c=0;c<MAXC;c++) r.courses.push({ name: LETTERS[c], pars: DEFAULT_PARS.slice() });
+  if (prev && !prev.sample){
+    r.venue = prev.venue; r.nP = prev.nP; r.nC = prev.nC;
+    for (p=0;p<MAXP;p++) r.players[p].name = prev.players[p].name;
+    for (c=0;c<MAXC;c++) r.courses[c] = { name: prev.courses[c].name, pars: prev.courses[c].pars.slice() };
+  }
+  return r;
+}
+
+/* ---------- sample data (marked as examples) ---------- */
+function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+var SAMPLE_NAMES = ['김철수','이영희','박민수','최순자'];
+function sampleRound(){
+  var r = makeRound(); r.sample = true; r.venue = '예시 파크골프장'; r.group = '1조'; r.steps = 3120;
+  SAMPLE_NAMES.forEach(function(n,i){ r.players[i].name = n; });
+  var A = [[3,4,2,5,5,3,4,3,4],[3,5,3,4,6,1,4,3,5],[4,4,3,4,5,3,5,3,4],[3,4,3,5,5,4,4,2,4]];
+  var B = [[3,4,3,4,5],[2,4,3,5,5],[3,5,3,4,6],[3,4,4,4,5]];
+  for (var p=0;p<4;p++){ r.scores[0][p] = A[p].slice(); for (var h=0;h<5;h++) r.scores[1][p][h] = B[p][h]; }
+  r.ob[0][2][0] = 1; r.ob[0][1][4] = 1;
+  r.cur = { c:1, h:5 };
+  return r;
+}
+function sampleHistory(){
+  var dates = ['2026-09-12','2026-09-19','2026-09-26'], skill = [0.2, 0.45, 0.65, 0.4], out = [];
+  dates.forEach(function(d, k){
+    var rand = rng(42 + k*7), r = makeRound(); r.sample = true; r.date = d; r.venue = '예시 파크골프장'; r.group = '1조'; r.steps = 6800 + k*900;
+    SAMPLE_NAMES.forEach(function(n,i){ r.players[i].name = n; });
+    for (var c=0;c<2;c++) for (var p=0;p<4;p++) for (var h=0;h<HOLES;h++){
+      var par = r.courses[c].pars[h], x = rand() + skill[p]*0.5 - k*0.04, s;
+      if (x < 0.06 && par === 3) s = 1; else if (x < 0.28) s = par - 1; else if (x < 0.78) s = par; else if (x < 1.0) s = par + 1; else s = par + 2;
+      r.scores[c][p][h] = s; if (x > 1.02) r.ob[c][p][h] = 1;
+    }
+    r.savedAt = Date.parse(d + 'T15:00:00');
+    out.push(r);
+  });
+  return out.reverse();
+}
+
+/* ---------- state ---------- */
+var settings = Object.assign({ tie:'shared', big:false, stride:65, goal:10000, sens:'mid' }, store.get(K.set, {}));
+var round = store.get(K.round, null);
+var history = store.get(K.hist, null);
+var names = store.get(K.names, []);
+var venues = store.get(K.venues, {});
+var steps = store.get(K.steps, { days:{} });
+if (!round || !round.scores){ round = sampleRound(); }
+if (!Array.isArray(history)){ history = sampleHistory(); }
+var tab = 'play';
+
+function saveRound(){ store.set(K.round, round); }
+function saveSettings(){ store.set(K.set, settings); }
+function saveHist(){ store.set(K.hist, history); }
+
+/* ---------- scoring ---------- */
+function resultOf(s, par){
+  if (s == null) return null;
+  if (s === 1) return { k:'ace', t:'홀인원' };
+  var d = s - par;
+  if (d <= -3) return { k:'eagle', t:'알바트로스' };
+  if (d === -2) return { k:'eagle', t:'이글' };
+  if (d === -1) return { k:'birdie', t:'버디' };
+  if (d === 0) return { k:'par', t:'파' };
+  if (d === 1) return { k:'bogey', t:'보기' };
+  if (d === 2) return { k:'double', t:'더블보기' };
+  if (d === 3) return { k:'double', t:'트리플' };
+  return { k:'double', t:'+' + d };
+}
+function pName(r, p){ return (r.players[p].name || '').trim() || ('경기자 ' + (p+1)); }
+function cName(r, c){ return (r.courses[c].name || '').trim() || LETTERS[c]; }
+function stats(r, p){
+  var o = { strokes:0, par:0, played:0, ace:0, eagle:0, birdie:0, pars:0, bogey:0, dbl:0, ob:0, course:[] };
+  for (var c=0;c<r.nC;c++){
+    var ct=0, cp=0, cn=0;
+    for (var h=0;h<HOLES;h++){
+      var s = r.scores[c][p][h], pa = r.courses[c].pars[h];
+      if (r.ob[c][p][h]) o.ob++;
+      if (s == null) continue;
+      ct += s; cp += pa; cn++;
+      var k = resultOf(s, pa).k;
+      if (k === 'ace') o.ace++; else if (k === 'eagle') o.eagle++; else if (k === 'birdie') o.birdie++; else if (k === 'par') o.pars++; else if (k === 'bogey') o.bogey++; else o.dbl++;
+    }
+    o.course.push(cn ? { s:ct, par:cp, n:cn } : null);
+    o.strokes += ct; o.par += cp; o.played += cn;
+  }
+  o.tp = o.strokes - o.par;
+  return o;
+}
+function ranking(r, tieMode){
+  var total = r.nC * HOLES, rows = [];
+  for (var p=0;p<r.nP;p++){ var st = stats(r,p); if (st.played) rows.push({ p:p, st:st }); }
+  var allDone = rows.length > 0 && rows.length === r.nP && rows.every(function(x){ return x.st.played === total; });
+  var key = function(x){ return allDone ? x.st.strokes : x.st.tp; };
+  var useCB = tieMode === 'countback' && allDone;
+  function cbList(x){
+    var a = [], c, h;
+    for (c=r.nC-1;c>=0;c--) a.push(x.st.course[c] ? x.st.course[c].s : 999);
+    for (c=r.nC-1;c>=0;c--) for (h=HOLES-1;h>=0;h--){ var s = r.scores[c][x.p][h]; a.push(s == null ? 99 : s); }
+    return a;
+  }
+  function cmp(a, b){
+    var d = key(a) - key(b); if (d) return d; if (!useCB) return 0;
+    var A = cbList(a), B = cbList(b);
+    for (var i=0;i<A.length;i++) if (A[i] !== B[i]) return A[i] - B[i];
+    return 0;
+  }
+  rows.sort(function(a,b){ return cmp(a,b) || a.p - b.p; });
+  rows.forEach(function(x, i){ x.rank = (i > 0 && cmp(rows[i-1], x) === 0) ? rows[i-1].rank : i + 1; });
+  rows.forEach(function(x){
+    x.tied = rows.some(function(y){ return y !== x && y.rank === x.rank; });
+    x.byCB = useCB && rows.some(function(y){ return y !== x && key(y) === key(x) && y.rank !== x.rank; });
+  });
+  return { rows:rows, allDone:allDone, total:total };
+}
+function hasScores(r){ for (var c=0;c<MAXC;c++) for (var p=0;p<MAXP;p++) for (var h=0;h<HOLES;h++) if (r.scores[c][p][h] != null) return true; return false; }
+
+/* ---------- toast ---------- */
+var toastT;
+function toast(msg, ms){ var t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function(){ t.classList.remove('show'); }, ms || 2200); }
+
+/* two-tap confirm (dialogs are not available everywhere) */
+function armed(btn, label, fn){
+  if (btn.classList.contains('armed')){ btn.classList.remove('armed'); btn.textContent = btn.dataset.label; clearTimeout(btn._t); fn(); return; }
+  btn.dataset.label = btn.textContent; btn.classList.add('armed'); btn.textContent = label;
+  btn._t = setTimeout(function(){ btn.classList.remove('armed'); btn.textContent = btn.dataset.label; }, 3500);
+}
+
+/* ---------- header ---------- */
+function renderTop(){
+  var bits = [fmtDate(round.date)];
+  if (round.venue) bits.push(round.venue);
+  if (round.group) bits.push(round.group);
+  $('#topMeta').textContent = bits.join(' · ');
+  $('#bigBtn').setAttribute('aria-pressed', settings.big ? 'true' : 'false');
+  document.documentElement.classList.toggle('big', !!settings.big);
+}
+
+/* ---------- setup ---------- */
+function renderSetupSummary(){
+  var cn = []; for (var c=0;c<round.nC;c++) cn.push(cName(round,c));
+  $('#setupSum').textContent = (round.venue || '구장 미입력') + ' · ' + round.nP + '명 · ' + cn.join('·') + '코스';
+  var q = (round.venue || '') + (round.venue && round.venue.indexOf('파크골프') < 0 ? ' 파크골프장' : '');
+  $('#mapLink').href = q ? 'https://map.naver.com/p/search/' + encodeURIComponent(q) : 'https://map.naver.com';
+  var v = venues[(round.venue||'').trim()];
+  $('#venueHint').textContent = v ? '저장된 구장입니다' : '';
+}
+function renderSetup(){
+  $('#fDate').value = round.date; $('#fGroup').value = round.group; $('#fVenue').value = round.venue;
+  $('#venueList').innerHTML = Object.keys(venues).map(function(v){ return '<option value="' + esc(v) + '">'; }).join('');
+  var sp = ''; for (var i=1;i<=MAXP;i++) sp += '<button type="button" data-np="' + i + '" aria-pressed="' + (round.nP===i) + '">' + i + '</button>';
+  $('#segPlayers').innerHTML = sp;
+  var sc = ''; for (i=1;i<=MAXC;i++) sc += '<button type="button" data-nc="' + i + '" aria-pressed="' + (round.nC===i) + '">' + i + '</button>';
+  $('#segCourses').innerHTML = sc;
+  var cnh = ''; for (var c=0;c<round.nC;c++) cnh += '<div class="pin"><span class="idx">' + (c+1) + '</span><input class="inp" data-cname="' + c + '" value="' + esc(round.courses[c].name) + '" aria-label="' + (c+1) + '번째 코스 이름" maxlength="8"></div>';
+  $('#courseNames').innerHTML = cnh;
+  var ph = ''; for (var p=0;p<round.nP;p++) ph += '<div class="pin"><span class="idx">' + (p+1) + '</span><input class="inp" data-pname="' + p + '" value="' + esc(round.players[p].name) + '" placeholder="경기자 ' + (p+1) + '" aria-label="경기자 ' + (p+1) + ' 이름" maxlength="10" autocomplete="off"></div>';
+  $('#playerInputs').innerHTML = ph;
+  renderNameChips(); renderSetupSummary();
+}
+function renderNameChips(){
+  var used = {}; for (var p=0;p<round.nP;p++) used[(round.players[p].name||'').trim()] = 1;
+  var list = names.filter(function(n){ return !used[n]; }).slice(0, 16);
+  $('#nameChipsWrap').hidden = !list.length;
+  $('#nameChips').innerHTML = list.map(function(n){ return '<button type="button" class="chip" data-chip="' + esc(n) + '">' + esc(n) + '</button>'; }).join('');
+}
+function applyVenue(name){
+  var v = venues[name]; if (!v) return false;
+  for (var c=0;c<MAXC;c++) if (v.courses[c]) round.courses[c] = { name: v.courses[c].name, pars: v.courses[c].pars.slice() };
+  round.nC = v.nC || round.nC;
+  return true;
+}
+
+$('#setup').addEventListener('input', function(e){
+  var t = e.target;
+  if (t.id === 'fDate') round.date = t.value || today();
+  else if (t.id === 'fGroup') round.group = t.value;
+  else if (t.id === 'fVenue') round.venue = t.value;
+  else if (t.dataset.pname != null) round.players[+t.dataset.pname].name = t.value;
+  else if (t.dataset.cname != null) round.courses[+t.dataset.cname].name = t.value;
+  saveRound(); renderTop(); renderSetupSummary();
+  if (t.dataset.pname != null || t.dataset.cname != null) renderHole();
+});
+$('#setup').addEventListener('change', function(e){
+  var t = e.target;
+  if (t.id === 'fVenue'){
+    var nm = t.value.trim();
+    if (venues[nm] && !hasScores(round)){ applyVenue(nm); saveRound(); renderSetup(); renderHole(); toast(nm + '의 코스와 파를 불러왔어요'); }
+  }
+  if (t.dataset.pname != null) renderNameChips();
+});
+$('#setup').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.np){ round.nP = +b.dataset.np; saveRound(); renderSetup(); renderHole(); renderTop(); }
+  else if (b.dataset.nc){ round.nC = +b.dataset.nc; fixCur(); saveRound(); renderSetup(); renderHole(); }
+  else if (b.dataset.chip != null){
+    for (var p=0;p<round.nP;p++) if (!(round.players[p].name||'').trim()){ round.players[p].name = b.dataset.chip; break; }
+    if (p === round.nP){ toast('빈 이름 칸이 없어요. 인원을 늘리거나 이름을 지워 주세요'); return; }
+    saveRound(); renderSetup(); renderHole();
+  }
+  else if (b.id === 'venueSave'){
+    var nm = (round.venue||'').trim(); if (!nm){ toast('구장 이름을 먼저 입력하세요'); return; }
+    venues[nm] = { nC: round.nC, courses: round.courses.map(function(c){ return { name:c.name, pars:c.pars.slice() }; }) };
+    store.set(K.venues, venues); renderSetup(); toast(nm + ' 코스·파를 저장했어요.\n다음에 구장 이름만 고르면 자동으로 채워집니다.', 3200);
+  }
+});
+$('#setup').addEventListener('toggle', function(){
+  if ($('#setup').open && round.sample){ round = makeRound(); saveRound(); renderAll(); toast('예시를 지우고 새 경기를 시작했어요'); }
+});
+function fixCur(){ if (round.cur.c >= round.nC){ round.cur.c = round.nC - 1; round.cur.h = 0; } }
+
+/* ---------- hole entry ---------- */
+function holeFilled(c, h){ for (var p=0;p<round.nP;p++) if (round.scores[c][p][h] == null) return false; return true; }
+function holeAny(c, h){ for (var p=0;p<round.nP;p++) if (round.scores[c][p][h] != null) return true; return false; }
+function renderHole(){
+  var c = round.cur.c, h = round.cur.h, pars = round.courses[c].pars, par = pars[h], i;
+  $('#sampleBanner').hidden = !round.sample;
+  // a fresh round starts with its setup on top; once scoring begins, setup moves below the live board
+  var setupEl = $('#setup'), view = $('#v-play'), fresh = !round.sample && !hasScores(round);
+  if (fresh && setupEl.nextElementSibling !== $('#holeHero')) view.insertBefore(setupEl, $('#holeHero'));
+  else if (!fresh && view.lastElementChild !== setupEl) view.appendChild(setupEl);
+  var ct = $('#ctabs'); ct.style.setProperty('--n', round.nC);
+  var html = '';
+  for (i=0;i<round.nC;i++){
+    var done = 0; for (var hh=0;hh<HOLES;hh++) if (holeFilled(i,hh)) done++;
+    var sumPar = round.courses[i].pars.reduce(function(a,b){ return a+b; },0);
+    html += '<button type="button" class="ctab" data-c="' + i + '" aria-pressed="' + (i===c) + '" aria-label="' + esc(cName(round,i)) + '코스, 9홀 중 ' + done + '홀 완료, 파 ' + sumPar + '"><b>' + esc(cName(round,i)) + '코스</b><span class="bar-t"><i style="--p:' + (done/9).toFixed(3) + '"></i>' + done + '/9</span></button>';
+  }
+  ct.innerHTML = html;
+  html = '';
+  for (i=0;i<HOLES;i++){
+    var cls = holeFilled(c,i) ? 'done' : (holeAny(c,i) ? 'part' : '');
+    html += '<button type="button" class="hbtn ' + cls + '" data-h="' + i + '"' + (i===h ? ' aria-current="true"' : '') + ' aria-label="' + (i+1) + '번 홀">' + (i+1) + '</button>';
+  }
+  $('#hstrip').innerHTML = html;
+  $('#hNum').textContent = h + 1;
+  var sumParC = pars.reduce(function(a,b){ return a+b; },0);
+  $('#hCourse').textContent = cName(round,c) + '코스 · PAR ' + sumParC;
+  $('#parSeg').innerHTML = [3,4,5].map(function(v){ return '<button type="button" data-par="' + v + '" aria-pressed="' + (v===par) + '">' + v + '</button>'; }).join('');
+  html = '';
+  for (var p=0;p<round.nP;p++){
+    var s = round.scores[c][p][h], ob = round.ob[c][p][h], st = stats(round, p), res = resultOf(s, par), nm = esc(pName(round,p));
+    var valCls = s == null ? 'ghost' : 'v-' + res.k;
+    html += '<div class="prow" data-p="' + p + '">'
+      + '<div class="pname"><b>' + nm + '</b><span>' + (st.played ? '<span class="num">' + st.strokes + '</span>타 · <span class="' + tpCls(st.tp) + '">' + tpText(st.tp) + '</span>' : '기록 전') + '</span></div>'
+      + '<div class="stepper">'
+      +   '<button type="button" data-act="dec" aria-label="' + nm + ' 한 타 빼기">−</button>'
+      +   '<button type="button" data-act="set" class="st-val ' + valCls + '" aria-label="' + nm + ' 점수 ' + (s == null ? '미입력, 누르면 파로 입력' : s + '타') + '">' + (s == null ? par : s) + '<small>' + (s == null ? '탭=파' : res.t) + '</small></button>'
+      +   '<button type="button" data-act="inc" aria-label="' + nm + ' 한 타 더하기">+</button>'
+      + '</div>'
+      + '<button type="button" class="ob-btn" data-act="ob" aria-pressed="' + (ob ? 'true' : 'false') + '" aria-label="' + nm + ' OB 벌타 표시">OB</button>'
+      + '</div>';
+  }
+  $('#players').innerHTML = html;
+  var last = c === round.nC - 1 && h === HOLES - 1;
+  var nb = $('#nextBtn');
+  nb.innerHTML = (last ? '결과 보기' : (h === HOLES - 1 ? esc(cName(round,c+1)) + '코스로' : (h + 2) + '번 홀로')) + ICON_NEXT;
+  nb.classList.toggle('ready', holeFilled(c,h));
+  $('#prevBtn').disabled = c === 0 && h === 0;
+  renderMini(); renderSetupSummary();
+}
+function renderMini(){
+  var rk = ranking(round, settings.tie), byP = {};
+  rk.rows.forEach(function(x){ byP[x.p] = x; });
+  var order = rk.rows.map(function(x){ return x.p; });
+  for (var p=0;p<round.nP;p++) if (order.indexOf(p) < 0) order.push(p);
+  $('#mini').innerHTML = order.map(function(p){
+    var x = byP[p];
+    return '<div class="live-item"><span class="rk' + (x && x.rank === 1 ? ' r1' : '') + '">' + (x ? x.rank : '–') + '</span><b>' + esc(pName(round,p)) + '</b>'
+      + '<span class="sc">' + (x ? x.st.strokes + '<small class="' + tpCls(x.st.tp) + '">' + tpText(x.st.tp) + '</small>' : '<small class="muted">—</small>') + '</span></div>';
+  }).join('');
+}
+$('#v-play').addEventListener('click', function(e){
+  var b = e.target.closest('#holeHero button, #players button'); if (!b) return;
+  var c = round.cur.c, h = round.cur.h, par = round.courses[c].pars[h];
+  if (b.dataset.c != null){ round.cur = { c:+b.dataset.c, h:0 }; for (var i=0;i<HOLES;i++) if (!holeFilled(round.cur.c,i)){ round.cur.h = i; break; } }
+  else if (b.dataset.h != null){ round.cur.h = +b.dataset.h; }
+  else if (b.dataset.par){ round.courses[c].pars[h] = +b.dataset.par; }
+  else if (b.dataset.act){
+    var p = +b.closest('.prow').dataset.p, s = round.scores[c][p][h];
+    if (b.dataset.act === 'set'){ if (s == null) round.scores[c][p][h] = par; }
+    else if (b.dataset.act === 'inc'){ round.scores[c][p][h] = Math.min(15, (s == null ? par : s) + 1); }
+    else if (b.dataset.act === 'dec'){ var base = s == null ? par : s; round.scores[c][p][h] = base - 1 < 1 ? null : base - 1; }
+    else if (b.dataset.act === 'ob'){ round.ob[c][p][h] = round.ob[c][p][h] ? 0 : 1; }
+    if (round.scores[c][p][h] === 1 && b.dataset.act !== 'ob') toast('홀인원! ' + pName(round,p) + '님 축하합니다', 2600);
+  }
+  else return;
+  saveRound(); renderHole();
+  if (b.dataset.act){ var nb = $('.prow[data-p="' + b.closest('.prow').dataset.p + '"] [data-act="' + b.dataset.act + '"]'); if (nb) nb.focus({ preventScroll:true }); }
+});
+$('#prevBtn').addEventListener('click', function(){
+  if (round.cur.h > 0) round.cur.h--; else if (round.cur.c > 0){ round.cur.c--; round.cur.h = HOLES - 1; }
+  saveRound(); renderHole();
+});
+$('#nextBtn').addEventListener('click', function(){
+  if (round.cur.h < HOLES - 1) round.cur.h++;
+  else if (round.cur.c < round.nC - 1){ round.cur.c++; round.cur.h = 0; }
+  else { setTab('result'); return; }
+  saveRound(); renderHole();
+  $('#holeHero').scrollIntoView({ block:'start', behavior:'smooth' });
+});
+$('#sampleNew').addEventListener('click', function(){ round = makeRound(); saveRound(); renderAll(); $('#setup').open = true; $('#setup').scrollIntoView({ block:'start', behavior:'smooth' }); toast('새 경기를 시작했어요. 구장과 이름을 입력하세요'); });
+
+/* ---------- scorecard ---------- */
+function renderCard(){
+  var html = '';
+  for (var c=0;c<round.nC;c++){
+    var pars = round.courses[c].pars, sumPar = pars.reduce(function(a,b){ return a+b; },0);
+    html += '<div class="stack" style="gap:.5rem"><div class="course-h"><h3>' + esc(cName(round,c)) + '코스</h3><span class="small muted num">PAR ' + sumPar + '</span></div><div class="tbl-wrap"><table><thead><tr><th>홀</th><th>파</th>';
+    for (var p=0;p<round.nP;p++) html += '<th class="pl">' + esc(pName(round,p)) + '</th>';
+    html += '</tr></thead><tbody>';
+    for (var h=0;h<HOLES;h++){
+      var cur = round.cur.c === c && round.cur.h === h;
+      html += '<tr><td class="hole' + (cur ? ' cur' : '') + '">' + (h+1) + '</td><td class="par">' + pars[h] + '</td>';
+      for (p=0;p<round.nP;p++){
+        var s = round.scores[c][p][h], res = resultOf(s, pars[h]), ob = round.ob[c][p][h];
+        html += '<td><button type="button" class="cellbtn" data-c="' + c + '" data-h="' + h + '" aria-label="' + esc(pName(round,p)) + ' ' + (h+1) + '번 홀 ' + (s == null ? '미입력' : s + '타 ' + res.t) + (ob ? ' OB' : '') + '"><i class="mk ' + (s == null ? 'empty' : res.k) + '">' + (s == null ? '·' : s) + '</i>' + (ob ? '<i class="ob-tag">OB</i>' : '') + '</button></td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody><tfoot><tr><th colspan="2">합계</th>';
+    for (p=0;p<round.nP;p++){
+      var cs = stats(round,p).course[c];
+      html += '<td>' + (cs ? '<span class="num">' + cs.s + '</span> <span class="small ' + tpCls(cs.s - cs.par) + '">' + tpText(cs.s - cs.par) + '</span>' : '<span class="muted">—</span>') + '</td>';
+    }
+    html += '</tr></tfoot></table></div></div>';
+  }
+  $('#cardTables').innerHTML = html;
+}
+$('#cardTables').addEventListener('click', function(e){
+  var b = e.target.closest('.cellbtn'); if (!b) return;
+  round.cur = { c:+b.dataset.c, h:+b.dataset.h }; saveRound(); setTab('play');
+});
+
+/* ---------- results ---------- */
+var CROWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
+function renderResults(){
+  var rk = ranking(round, settings.tie);
+  var cn = []; for (var c=0;c<round.nC;c++) cn.push(cName(round,c));
+  $('#resMeta').textContent = [fmtDate(round.date), round.venue, round.group, cn.join('·') + '코스'].filter(Boolean).join(' · ');
+  var leaders = rk.rows.filter(function(x){ return x.rank === 1; });
+  $('#winner').innerHTML = leaders.length
+    ? '<div class="winner"><span class="crown">' + CROWN + '</span><div><span>' + (rk.allDone ? (leaders.length > 1 ? '공동 우승' : '우승') : '현재 선두') + '</span><b>' + leaders.map(function(x){ return esc(pName(round,x.p)); }).join(', ') + '</b></div>'
+      + '<div class="sc"><b>' + leaders[0].st.strokes + '</b><br><span>' + tpText(leaders[0].st.tp) + '</span></div></div>'
+    : '<div class="winner"><div><span>아직 입력된 점수가 없어요</span><b>첫 홀 점수를 넣어 보세요</b></div></div>';
+  $$('#segTie button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.tie === settings.tie ? 'true' : 'false'); });
+  $('#tieHelp').textContent = settings.tie === 'countback'
+    ? '타수가 같으면 마지막 코스 합계 → 마지막 홀부터 거꾸로 비교해 적은 사람이 앞섭니다. 모든 홀을 마친 뒤 적용됩니다.'
+    : '타수가 같으면 같은 순위로 표시합니다.' + (rk.rows.length && !rk.allDone ? ' 경기 중에는 친 홀까지의 파 대비 점수로 순위를 매깁니다.' : '');
+  var html = '';
+  if (!rk.rows.length) html = '<div class="empty-note">입력 화면에서 첫 홀 점수를 넣으면 순위가 나타납니다.</div>';
+  rk.rows.forEach(function(x){
+    var note = x.st.played + '/' + rk.total + '홀' + (x.st.ace ? ' · 홀인원 ' + x.st.ace : '') + (x.st.ob ? ' · OB ' + x.st.ob : '');
+    html += '<div class="lb-row' + (x.rank === 1 ? ' first' : '') + '"><div class="medal">' + x.rank + (x.tied ? '<small>공동</small>' : (x.byCB ? '<small>백카운트</small>' : '')) + '</div>'
+      + '<div class="lb-name"><b>' + esc(pName(round,x.p)) + '</b><span>' + note + '</span></div>'
+      + '<div class="lb-score"><span class="num">' + x.st.strokes + '</span><span class="tp ' + tpCls(x.st.tp) + '">' + tpText(x.st.tp) + '</span></div></div>';
+  });
+  $('#leader').innerHTML = html;
+
+  var sts = []; for (var p=0;p<round.nP;p++) sts.push(stats(round,p));
+  var head = '<thead><tr><th>코스</th>' + sts.map(function(_,p){ return '<th class="pl">' + esc(pName(round,p)) + '</th>'; }).join('') + '</tr></thead>';
+  var body = '<tbody>';
+  for (c=0;c<round.nC;c++){
+    body += '<tr><th>' + esc(cName(round,c)) + '</th>' + sts.map(function(st){ var cs = st.course[c]; return '<td class="num" style="font-size:1.25rem;font-weight:600">' + (cs ? cs.s : '—') + '</td>'; }).join('') + '</tr>';
+  }
+  body += '</tbody><tfoot><tr><th>총계</th>' + sts.map(function(st){ return '<td>' + (st.played ? '<span class="num">' + st.strokes + '</span> <span class="small ' + tpCls(st.tp) + '">' + tpText(st.tp) + '</span>' : '—') + '</td>'; }).join('') + '</tr></tfoot>';
+  $('#sumTable').innerHTML = head + body;
+
+  var rowsDef = [['홀인원','ace'],['이글 이하','eagle'],['버디','birdie'],['파','pars'],['보기','bogey'],['더블보기+','dbl'],['OB·벌타','ob']];
+  $('#statTable').innerHTML = '<thead><tr><th>구분</th>' + sts.map(function(_,p){ return '<th class="pl">' + esc(pName(round,p)) + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + rowsDef.map(function(d){ return '<tr><th>' + d[0] + '</th>' + sts.map(function(st){ var v = st[d[1]]; return '<td class="num" style="font-size:1.125rem;font-weight:600' + (v ? '' : ';color:var(--ink-3)') + '">' + (v || '·') + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+  $('#roundSteps').textContent = round.steps ? '이번 라운드 걸음 ' + comma(round.steps) + '보 · 약 ' + (round.steps * settings.stride / 100000).toFixed(2) + 'km' : '';
+  $('#fNote').value = round.note || '';
+}
+$('#segTie').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; settings.tie = b.dataset.tie; saveSettings(); renderResults(); });
+$('#fNote').addEventListener('input', function(e){ round.note = e.target.value; saveRound(); });
+
+function buildText(){
+  var rk = ranking(round, settings.tie), L = [];
+  L.push('⛳ 파크골프 경기 결과');
+  L.push('━━━━━━━━━━━━━━');
+  L.push('📅 ' + fmtDate(round.date));
+  if (round.venue) L.push('📍 ' + round.venue);
+  if (round.group) L.push('👥 ' + round.group);
+  var cn = []; for (var c=0;c<round.nC;c++) cn.push(cName(round,c)); L.push('🏌 ' + cn.join('·') + '코스 (' + rk.total + '홀)');
+  L.push('');
+  rk.rows.forEach(function(x){
+    var cs = x.st.course.map(function(v){ return v ? v.s : '-'; }).join('/');
+    L.push(x.rank + '위 ' + pName(round,x.p) + '  ' + x.st.strokes + '타 (' + tpPlain(x.st.tp) + ')  [' + cs + ']' + (x.st.ace ? ' 🎯홀인원' + x.st.ace : ''));
+  });
+  if (round.steps) L.push('', '👟 ' + comma(round.steps) + '보');
+  if (round.note) L.push('', '📝 ' + round.note);
+  L.push('━━━━━━━━━━━━━━');
+  return L.join('\n');
+}
+function copyText(text){
+  function fallback(){
+    var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta); toast(ok ? '복사했어요. 카카오톡 대화창에 붙여넣기 하세요' : '복사가 막혀 있어요. 직접 선택해 복사해 주세요', 3000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ toast('복사했어요. 카카오톡 대화창에 붙여넣기 하세요', 3000); }, fallback);
+  } else fallback();
+}
+$('#copyBtn').addEventListener('click', function(){ copyText(buildText()); });
+$('#shareBtn').addEventListener('click', function(){
+  var text = buildText();
+  if (navigator.share){ navigator.share({ text: text }).catch(function(err){ if (err && err.name === 'AbortError') return; copyText(text); }); }
+  else copyText(text);
+});
+$('#saveBtn').addEventListener('click', function(){
+  if (!hasScores(round)){ toast('저장할 점수가 없어요'); return; }
+  if (round.sample){ toast('예시 경기는 저장하지 않아요. 새 경기를 시작해 주세요', 2800); return; }
+  history = history.filter(function(h){ return !h.sample && h.id !== round.id; });
+  var copy = JSON.parse(JSON.stringify(round)); copy.savedAt = Date.now();
+  history.unshift(copy); history = history.slice(0, 200); saveHist();
+  for (var p=0;p<round.nP;p++){ var n = (round.players[p].name||'').trim(); if (n){ names = names.filter(function(x){ return x !== n; }); names.unshift(n); } }
+  names = names.slice(0, 30); store.set(K.names, names);
+  var vn = (round.venue||'').trim();
+  if (vn){ venues[vn] = { nC: round.nC, courses: round.courses.map(function(c){ return { name:c.name, pars:c.pars.slice() }; }) }; store.set(K.venues, venues); }
+  toast('기록을 저장했어요 (총 ' + history.length + '경기)');
+});
+$('#newBtn').addEventListener('click', function(e){
+  armed(e.currentTarget, '한 번 더 누르면 새 경기', function(){
+    round = makeRound(round); saveRound(); setTab('play'); renderAll(); $('#setup').open = true;
+    toast('새 경기를 시작했어요. 구장·이름·코스는 그대로 두었어요', 2800);
+  });
+});
+
+/* ---------- result image (canvas, always light) ---------- */
+var lastBlob = null;
+function drawImage(){
+  var rk = ranking(round, settings.tie), sts = [], p, c;
+  for (p=0;p<round.nP;p++) sts.push(stats(round,p));
+  var W = 1080, pad = 64, rowH = 104, tblRow = 72;
+  var H = 330 + Math.max(1, rk.rows.length) * rowH + 70 + (round.nC + 2) * tblRow + 110;
+  var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  var g = cv.getContext('2d');
+  var C = { bg:'#EDF1EC', card:'#FFFFFF', ink:'#0F1C15', muted:'#56645B', faint:'#8A968E', hair:'#DDE3DC', pine:'#0F4630', pine2:'#082B1D', mint:'#9BE3B9', under:'#2460B0', over:'#BE412E', brass:'#A47E22', brassSoft:'#F5ECD6' };
+  var FB = '"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif', FN = '"Barlow Semi Condensed","Arial Narrow",sans-serif';
+  g.fillStyle = C.bg; g.fillRect(0,0,W,H);
+  g.save();
+  var grd = g.createLinearGradient(0,0,W*0.4,280); grd.addColorStop(0,C.pine); grd.addColorStop(1,C.pine2);
+  g.fillStyle = grd; roundRect(g, 24, 24, W-48, 250, 40); g.fill(); g.clip();
+  g.strokeStyle = 'rgba(243,248,244,.12)'; g.lineWidth = 2; g.beginPath(); g.arc(W-90, 300, 170, 0, Math.PI*2); g.stroke(); g.beginPath(); g.arc(W-90, 300, 250, 0, Math.PI*2); g.stroke();
+  g.restore();
+  g.fillStyle = 'rgba(243,248,244,.7)'; g.font = '700 30px ' + FB; g.textBaseline = 'alphabetic';
+  var cn = []; for (c=0;c<round.nC;c++) cn.push(cName(round,c));
+  g.fillText([fmtDate(round.date), round.venue].filter(Boolean).join('  ·  '), pad + 12, 100);
+  g.fillStyle = '#F3F8F4'; g.font = '800 64px ' + FB; g.fillText('파크골프 경기 결과', pad + 12, 182);
+  g.fillStyle = C.mint; g.font = '700 30px ' + FB; g.fillText([round.group, cn.join('·') + '코스 ' + rk.total + '홀'].filter(Boolean).join('  ·  '), pad + 12, 234);
+  var y = 314;
+  if (!rk.rows.length){ g.fillStyle = C.muted; g.font = '500 34px ' + FB; g.fillText('입력된 점수가 없습니다', pad, y + 56); y += rowH; }
+  rk.rows.forEach(function(x){
+    var first = x.rank === 1, h = rowH - 16;
+    g.fillStyle = first ? C.brassSoft : C.card; roundRect(g, pad - 16, y, W - (pad-16)*2, h, 28); g.fill();
+    if (first){ g.strokeStyle = C.brass; g.lineWidth = 2; g.stroke(); }
+    var mid = y + h/2;
+    g.fillStyle = first ? C.brass : C.bg; g.beginPath(); g.arc(pad + 40, mid, 30, 0, Math.PI*2); g.fill();
+    g.fillStyle = first ? '#FFFFFF' : C.muted; g.font = '700 36px ' + FN; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(x.rank), pad + 40, mid + 2);
+    g.textAlign = 'left'; g.fillStyle = C.ink; g.font = '800 40px ' + FB; g.fillText(clip(g, pName(round,x.p), 520), pad + 100, mid + 2);
+    g.textAlign = 'right'; g.font = '600 64px ' + FN; g.fillText(String(x.st.strokes), W - pad - 120, mid + 4);
+    g.font = '600 38px ' + FN; g.fillStyle = x.st.tp > 0 ? C.over : (x.st.tp < 0 ? C.under : C.faint); g.fillText(tpPlain(x.st.tp), W - pad - 16, mid + 4);
+    g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+    y += rowH;
+  });
+  y += 40;
+  var colW = (W - pad*2 - 150) / Math.max(1, round.nP);
+  g.font = '700 28px ' + FB; g.fillStyle = C.faint; g.fillText('코스', pad + 8, y + 40);
+  g.textAlign = 'center';
+  for (p=0;p<round.nP;p++){ g.fillStyle = C.ink; g.font = '800 30px ' + FB; g.fillText(clip(g, pName(round,p), colW - 12), pad + 150 + colW*p + colW/2, y + 40); }
+  y += tblRow;
+  for (c=0;c<=round.nC;c++){
+    var isTot = c === round.nC;
+    g.strokeStyle = isTot ? C.ink : C.hair; g.lineWidth = isTot ? 3 : 2; g.beginPath(); g.moveTo(pad, y - tblRow + 12); g.lineTo(W - pad, y - tblRow + 12); g.stroke();
+    g.textAlign = 'left'; g.fillStyle = C.muted; g.font = '700 30px ' + FB; g.fillText(isTot ? '총계' : cName(round,c), pad + 8, y - 12);
+    g.textAlign = 'center';
+    for (p=0;p<round.nP;p++){
+      var v = isTot ? (sts[p].played ? sts[p].strokes : '-') : (sts[p].course[c] ? sts[p].course[c].s : '-');
+      g.fillStyle = C.ink; g.font = (isTot ? '700 50px ' : '600 42px ') + FN; g.fillText(String(v), pad + 150 + colW*p + colW/2, y - 10);
+    }
+    y += tblRow;
+  }
+  g.textAlign = 'left'; g.fillStyle = C.faint; g.font = '700 26px ' + FB;
+  g.fillText('파크골프 스코어북' + (round.steps ? '   ·   걸음 ' + comma(round.steps) + '보' : ''), pad, H - 50);
+  return cv;
+}
+function clip(g, s, w){ if (g.measureText(s).width <= w) return s; while (s.length > 1 && g.measureText(s + '…').width > w) s = s.slice(0,-1); return s + '…'; }
+function roundRect(g, x, y, w, h, r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+$('#imgBtn').addEventListener('click', function(){
+  var go = function(){
+    var cv = drawImage();
+    $('#sheetImg').src = cv.toDataURL('image/png');
+    lastBlob = null; if (cv.toBlob) cv.toBlob(function(b){ lastBlob = b; }, 'image/png');
+    $('#sheet').hidden = false; $('#sheetClose').focus();
+  };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(go, go); else go();
+});
+$('#sheetClose').addEventListener('click', function(){ $('#sheet').hidden = true; });
+$('#sheet').addEventListener('click', function(e){ if (e.target === e.currentTarget) e.currentTarget.hidden = true; });
+$('#sheetShare').addEventListener('click', function(){
+  if (!lastBlob){ toast('이미지를 길게 눌러 저장해 주세요'); return; }
+  var file = new File([lastBlob], 'parkgolf-' + round.date + '.png', { type:'image/png' });
+  if (navigator.canShare && navigator.canShare({ files:[file] })){
+    navigator.share({ files:[file], title:'파크골프 경기 결과' }).catch(function(err){ if (!err || err.name !== 'AbortError') toast('공유를 열 수 없어요. 이미지를 길게 눌러 저장하세요', 3000); });
+  } else toast('이 브라우저는 이미지 공유를 지원하지 않아요.\n이미지를 길게 눌러 저장하세요', 3200);
+});
+
+/* ---------- history ---------- */
+var statPick = null;
+function allPlayerNames(){
+  var cnt = {};
+  history.forEach(function(r){ for (var p=0;p<r.nP;p++){ var n = (r.players[p].name||'').trim(); if (n) cnt[n] = (cnt[n]||0) + 1; } });
+  return Object.keys(cnt).sort(function(a,b){ return cnt[b] - cnt[a]; });
+}
+function renderHist(){
+  var hasSample = history.some(function(h){ return h.sample; });
+  $('#histSample').hidden = !hasSample;
+  $('#histCount').textContent = history.length ? history.length + '경기' : '';
+  var pn = allPlayerNames();
+  if (!statPick || pn.indexOf(statPick) < 0) statPick = pn[0] || null;
+  $('#statChips').innerHTML = pn.map(function(n){ return '<button type="button" class="chip" data-stat="' + esc(n) + '" aria-pressed="' + (n === statPick) + '">' + esc(n) + '</button>'; }).join('');
+  renderPersonal();
+  if (!history.length){ $('#histList').innerHTML = '<div class="empty-note">저장된 경기가 없어요. 결과 화면에서 ‘기록 저장’을 누르면 여기에 쌓입니다.</div>'; return; }
+  $('#histList').innerHTML = history.map(function(r, i){
+    var rk = ranking(r, settings.tie), d = parseYmd(r.date);
+    var cn = []; for (var c=0;c<r.nC;c++) cn.push(cName(r,c));
+    var pls = rk.rows.map(function(x){ return '<span' + (x.rank === 1 ? ' class="win"' : '') + '>' + esc(pName(r,x.p)) + ' <span class="num">' + x.st.strokes + '</span> <span class="small ' + tpCls(x.st.tp) + '">' + tpText(x.st.tp) + '</span></span>'; }).join('');
+    return '<div class="card hcard"><div class="dchip"><span>' + (d.getMonth()+1) + '월</span><b>' + d.getDate() + '</b><span>' + DOW[d.getDay()] + '</span></div>'
+      + '<div class="hbody"><div class="where">' + (r.sample ? '<span class="tag">예시</span>' : '') + esc(r.venue || '구장 미입력') + '<small>' + esc([r.group, cn.join('·') + '코스', r.steps ? '걸음 ' + comma(r.steps) + '보' : ''].filter(Boolean).join(' · ')) + '</small></div>'
+      + '<div class="pls">' + pls + '</div>'
+      + '<div class="hact"><button type="button" class="btn" data-load="' + i + '">불러오기</button><button type="button" class="btn warn" data-del="' + i + '">삭제</button></div></div></div>';
+  }).join('');
+}
+function renderPersonal(){
+  var el = $('#statBody');
+  if (!statPick){ el.innerHTML = '<p class="small muted">저장된 경기가 쌓이면 사람별 평균 타수와 추이를 보여 드려요.</p>'; return; }
+  var rounds = [], tot = { holes:0, strokes:0, tp:0, ace:0, birdie:0, best:null };
+  history.slice().reverse().forEach(function(r){
+    for (var p=0;p<r.nP;p++){
+      if ((r.players[p].name||'').trim() !== statPick) continue;
+      var st = stats(r,p); if (!st.played) continue;
+      var per9 = st.tp / st.played * 9;
+      rounds.push({ date:r.date, per9:per9, st:st, sample:r.sample });
+      tot.holes += st.played; tot.strokes += st.strokes; tot.tp += st.tp; tot.ace += st.ace; tot.birdie += st.birdie + st.eagle;
+      if (!tot.best || per9 < tot.best.per9) tot.best = { per9:per9, st:st, date:r.date };
+    }
+  });
+  if (!rounds.length){ el.innerHTML = '<p class="small muted">기록이 없어요.</p>'; return; }
+  var avg9 = tot.strokes / tot.holes * 9, avgTp9 = tot.tp / tot.holes * 9;
+  var html = '<div class="kv">'
+    + '<div><span>경기 수</span><b>' + rounds.length + '<small>경기</small></b></div>'
+    + '<div><span>9홀 평균</span><b>' + avg9.toFixed(1) + '<small>타 (' + (avgTp9 > 0 ? '+' : '') + avgTp9.toFixed(1) + ')</small></b></div>'
+    + '<div><span>최고 기록</span><b>' + tot.best.st.strokes + '<small>타 · ' + tot.best.st.played + '홀 · ' + tpText(tot.best.st.tp) + '</small></b></div>'
+    + '<div><span>버디 이하 비율</span><b>' + Math.round(tot.birdie / tot.holes * 100) + '<small>%</small></b></div>'
+    + '<div><span>홀인원</span><b>' + tot.ace + '<small>번</small></b></div>'
+    + '</div>';
+  html += spark(rounds.slice(-10));
+  el.innerHTML = html;
+}
+function spark(list){
+  if (list.length < 2) return '<p class="small muted">경기가 2번 이상 쌓이면 추이 그래프가 나타납니다.</p>';
+  var W = 320, H = 120, L = 34, R = 12, T = 14, B = 26;
+  var vals = list.map(function(x){ return x.per9; });
+  var mn = Math.min.apply(null, vals.concat([0])), mx = Math.max.apply(null, vals.concat([0]));
+  mn = Math.floor(mn) - 1; mx = Math.ceil(mx) + 1;
+  var xs = function(i){ return L + (W - L - R) * (i / (list.length - 1)); };
+  var ys = function(v){ return T + (H - T - B) * ((mx - v) / (mx - mn)); };
+  var pts = list.map(function(x,i){ return xs(i).toFixed(1) + ',' + ys(x.per9).toFixed(1); });
+  var area = 'M' + xs(0).toFixed(1) + ',' + ys(mn).toFixed(1) + ' L' + pts.join(' L') + ' L' + xs(list.length-1).toFixed(1) + ',' + ys(mn).toFixed(1) + 'Z';
+  var lastI = list.length - 1, last = list[lastI];
+  var dots = list.map(function(x,i){ return '<circle cx="' + xs(i).toFixed(1) + '" cy="' + ys(x.per9).toFixed(1) + '" r="' + (i === lastI ? 5 : 3.5) + '" fill="' + (i === lastI ? 'var(--accent)' : 'var(--surface)') + '" stroke="var(--accent)" stroke-width="2"><title>' + fmtDate(x.date) + ' · 9홀당 ' + (x.per9 > 0 ? '+' : '') + x.per9.toFixed(1) + '</title></circle>'; }).join('');
+  var fmt = function(v){ return v === 0 ? 'E' : (v > 0 ? '+' + v : '−' + Math.abs(v)); };
+  return '<div class="stack" style="gap:.375rem"><span class="label">9홀당 파 대비 추이 · 최근 ' + list.length + '경기 · 아래로 갈수록 좋음</span>'
+    + '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="최근 경기 9홀당 파 대비 점수 추이, 마지막 ' + last.per9.toFixed(1) + '">'
+    + '<line x1="' + L + '" x2="' + (W-R) + '" y1="' + ys(0).toFixed(1) + '" y2="' + ys(0).toFixed(1) + '" stroke="var(--hair)" stroke-width="1.5" stroke-dasharray="3 3"/>'
+    + '<text x="' + (L-6) + '" y="' + (ys(0)+4).toFixed(1) + '" text-anchor="end">E</text>'
+    + '<text x="' + (L-6) + '" y="' + (ys(mx)+4).toFixed(1) + '" text-anchor="end">' + fmt(mx) + '</text>'
+    + '<text x="' + (L-6) + '" y="' + (ys(mn)+4).toFixed(1) + '" text-anchor="end">' + fmt(mn) + '</text>'
+    + '<path d="' + area + '" fill="var(--accent-soft)" opacity=".8"/>'
+    + '<polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>'
+    + dots
+    + '<text x="' + xs(0) + '" y="' + (H-6) + '" text-anchor="start">' + list[0].date.slice(5).replace('-','/') + '</text>'
+    + '<text x="' + xs(lastI) + '" y="' + (H-6) + '" text-anchor="end">' + last.date.slice(5).replace('-','/') + ' · ' + (last.per9 > 0 ? '+' : '') + last.per9.toFixed(1) + '</text>'
+    + '</svg></div>';
+}
+$('#v-hist').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.stat != null){ statPick = b.dataset.stat; renderHist(); }
+  else if (b.id === 'histSampleDel'){ history = history.filter(function(h){ return !h.sample; }); saveHist(); renderHist(); toast('예시 기록을 지웠어요'); }
+  else if (b.dataset.del != null){ armed(b, '한 번 더 누르면 삭제', function(){ history.splice(+b.dataset.del, 1); saveHist(); renderHist(); toast('삭제했어요'); }); }
+  else if (b.dataset.load != null){
+    var go = function(){ round = JSON.parse(JSON.stringify(history[+b.dataset.load])); delete round.savedAt; saveRound(); renderAll(); setTab('result'); toast('불러왔어요. 고친 뒤 다시 저장하면 덮어씁니다', 2800); };
+    if (hasScores(round) && !round.sample && !history.some(function(h){ return h.id === round.id; })) armed(b, '지금 경기가 사라져요. 한 번 더', go); else go();
+  }
+});
+
+/* ---------- pedometer ---------- */
+var pedo = { on:false, base:9.8, smooth:0, above:false, last:0, pending:0, walking:false, gotData:false, lock:null };
+var SENS = { low:1.6, mid:1.1, high:0.75 };
+function dayRec(d){ d = d || today(); if (!steps.days[d]) steps.days[d] = { steps:0, ms:0 }; return steps.days[d]; }
+function pruneSteps(){ var keys = Object.keys(steps.days).sort(); while (keys.length > 60) delete steps.days[keys.shift()]; }
+var stepSaveT;
+function addStep(n){
+  dayRec().steps += n;
+  if (!round.sample){ round.steps = (round.steps || 0) + n; }
+  clearTimeout(stepSaveT); stepSaveT = setTimeout(function(){ store.set(K.steps, steps); saveRound(); }, 800);
+  if (tab === 'steps') renderStepsLive();
+}
+function onMotion(e){
+  var a = e.accelerationIncludingGravity; if (!a || a.x == null) return;
+  pedo.gotData = true;
+  var m = Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+  pedo.base = pedo.base * 0.98 + m * 0.02;
+  pedo.smooth = pedo.smooth * 0.6 + (m - pedo.base) * 0.4;
+  var th = SENS[settings.sens] || SENS.mid, t = performance.now();
+  if (!pedo.above && pedo.smooth > th){
+    pedo.above = true;
+    if (t - pedo.last < 280) return;
+    if (t - pedo.last > 2000){ pedo.pending = 0; pedo.walking = false; }
+    else if (pedo.walking) dayRec().ms += t - pedo.last;
+    pedo.last = t;
+    if (pedo.walking) addStep(1);
+    else if (++pedo.pending >= 4){ pedo.walking = true; addStep(pedo.pending); pedo.pending = 0; }
+  } else if (pedo.above && pedo.smooth < th * 0.3){ pedo.above = false; }
+}
+function setStatus(cls, text){ var s = $('#pedoStatus'); s.className = 'status ' + (cls||''); s.querySelector('span').textContent = text; }
+function wake(){ if (!pedo.on || !navigator.wakeLock || document.visibilityState !== 'visible') return; navigator.wakeLock.request('screen').then(function(l){ pedo.lock = l; }, function(){}); }
+function startPedo(){
+  if (typeof DeviceMotionEvent === 'undefined'){ setStatus('err', '이 기기에는 동작 센서가 없어요. 아래에서 걸음 수를 직접 더할 수 있어요.'); return; }
+  var begin = function(){
+    pedo.on = true; pedo.gotData = false; pedo.pending = 0; pedo.walking = false; pedo.last = 0;
+    window.addEventListener('devicemotion', onMotion);
+    wake();
+    $('#pedoBtn').textContent = '측정 멈추기'; $('#pedoBtn').classList.add('stop');
+    setStatus('on', '측정 중입니다. 화면을 켜 둔 채 걸으세요.');
+    setTimeout(function(){ if (pedo.on && !pedo.gotData){ stopPedo(); setStatus('err', '센서 신호가 들어오지 않아요. 이 브라우저에서는 측정이 막혀 있을 수 있어요. 걸음 수를 직접 더해 주세요.'); } }, 3000);
+  };
+  if (typeof DeviceMotionEvent.requestPermission === 'function'){
+    DeviceMotionEvent.requestPermission().then(function(r){ if (r === 'granted') begin(); else setStatus('err', '동작 센서 권한이 거절됐어요. 설정에서 허용하거나 직접 입력해 주세요.'); }, function(){ setStatus('err', '동작 센서 권한을 받을 수 없어요. 걸음 수를 직접 더해 주세요.'); });
+  } else begin();
+}
+function stopPedo(){
+  pedo.on = false; window.removeEventListener('devicemotion', onMotion);
+  if (pedo.lock){ try { pedo.lock.release(); } catch(e){} pedo.lock = null; }
+  $('#pedoBtn').textContent = '걸음 측정 시작'; $('#pedoBtn').classList.remove('stop');
+  setStatus('', '멈췄어요. 다시 누르면 이어서 셉니다.');
+  store.set(K.steps, steps); saveRound();
+}
+document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') wake(); });
+$('#pedoBtn').addEventListener('click', function(){ if (pedo.on) stopPedo(); else startPedo(); });
+$('#addStepsBtn').addEventListener('click', function(){
+  var n = Math.round(+$('#addSteps').value);
+  if (!(n > 0 && n <= 100000)){ toast('1에서 100,000 사이 숫자를 넣어 주세요'); return; }
+  addStep(n); store.set(K.steps, steps); saveRound(); $('#addSteps').value = ''; renderSteps(); toast(comma(n) + '보를 더했어요');
+});
+$('#fStride').addEventListener('change', function(e){ var v = Math.round(+e.target.value); if (v >= 30 && v <= 120){ settings.stride = v; saveSettings(); renderSteps(); } else e.target.value = settings.stride; });
+$('#fGoal').addEventListener('change', function(e){ var v = Math.round(+e.target.value); if (v >= 1000 && v <= 50000){ settings.goal = v; saveSettings(); renderSteps(); } else e.target.value = settings.goal; });
+$('#segSens').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; settings.sens = b.dataset.sens; saveSettings(); renderSteps(); });
+$('#stepReset').addEventListener('click', function(e){ armed(e.currentTarget, '한 번 더 누르면 0으로', function(){ steps.days[today()] = { steps:0, ms:0 }; store.set(K.steps, steps); renderSteps(); }); });
+
+function renderStepsLive(){
+  var d = dayRec(), n = d.steps, goal = settings.goal;
+  $('#stepNum').textContent = comma(n);
+  $('#stepGoalTxt').textContent = n >= goal ? '목표 달성 · ' + comma(goal) + '보' : '목표 ' + comma(goal) + '보 · ' + Math.floor(n / goal * 100) + '%';
+  var circ = 603.19; $('#ringBar').setAttribute('stroke-dashoffset', (circ * (1 - Math.min(1, n / goal))).toFixed(2));
+  $('#stepKm').innerHTML = (n * settings.stride / 100000).toFixed(2) + '<small>km</small>';
+  $('#stepKcal').innerHTML = comma(n * 0.04) + '<small>kcal</small>';
+  $('#stepMin').innerHTML = comma(d.ms / 60000) + '<small>분</small>';
+}
+function renderSteps(){
+  pruneSteps();
+  $('#stepDate').textContent = fmtDate(today());
+  $('#fStride').value = settings.stride; $('#fGoal').value = settings.goal;
+  $$('#segSens button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.sens === settings.sens ? 'true' : 'false'); });
+  renderStepsLive();
+  var days = [], i, now = new Date();
+  for (i=6;i>=0;i--){ var dt = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i); var key = ymd(dt); days.push({ key:key, dow:DOW[dt.getDay()], n:(steps.days[key]||{}).steps || 0, today:i===0 }); }
+  var max = Math.max(settings.goal, Math.max.apply(null, days.map(function(d){ return d.n; })));
+  var goalPct = settings.goal / max * 100;
+  var html = '<div class="bars">'
+    + '<div class="goal-line" style="bottom:calc(7.75rem * ' + (goalPct / 100).toFixed(4) + ')"><span>목표 ' + comma(settings.goal) + '</span></div>';
+  days.forEach(function(d){
+    var hp = (d.n ? Math.max(1.5, d.n / max * 100) : 1.5).toFixed(2);
+    html += '<div class="bar' + (d.today ? ' today' : '') + (d.n ? '' : ' zero') + '" title="' + d.key + ' · ' + comma(d.n) + '보"><i style="height:' + hp + '%"></i>' + (d.n ? '<span style="bottom:calc(' + hp + '% + 2px)">' + comma(d.n) + '</span>' : '') + '</div>';
+  });
+  html += '</div><div class="bar-x">' + days.map(function(d){ return '<span' + (d.today ? ' style="color:var(--ink)"' : '') + '>' + (d.today ? '오늘' : d.dow) + '</span>'; }).join('') + '</div>';
+  $('#weekBars').innerHTML = html;
+}
+
+/* ---------- tabs ---------- */
+var VIEWS = { play:'#v-play', card:'#v-card', result:'#v-result', hist:'#v-hist', steps:'#v-steps' };
+function setTab(t){
+  if (!VIEWS[t]) t = 'play';
+  tab = t; store.set(K.tab, t);
+  Object.keys(VIEWS).forEach(function(k){ $(VIEWS[k]).hidden = k !== t; });
+  $$('.tab').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false'); });
+  renderTab();
+  window.scrollTo(0, 0);
+}
+function renderTab(){
+  if (tab === 'play') renderHole();
+  else if (tab === 'card') renderCard();
+  else if (tab === 'result') renderResults();
+  else if (tab === 'hist') renderHist();
+  else if (tab === 'steps') renderSteps();
+}
+function renderAll(){ renderTop(); renderSetup(); renderTab(); }
+$$('.tab').forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
+$('#bigBtn').addEventListener('click', function(){ settings.big = !settings.big; saveSettings(); renderTop(); });
+
+var start = (location.hash || '').slice(1);
+renderTop(); renderSetup();
+$('#setup').open = !round.sample && !hasScores(round);
+setTab(VIEWS[start] ? start : (store.get(K.tab, 'play')));
+
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "파크골프 스코어북",
+  "short_name": "스코어북",
+  "description": "파크골프 점수 기록, 순위·통계, 만보기",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EDF1EC",
+  "theme_color": "#0F4630",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
