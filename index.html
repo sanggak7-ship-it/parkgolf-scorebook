@@ -11,6 +11,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="파크노트">
+<meta name="description" content="파크골프 점수 기록, 순위, 결과 사진·링크 보내기, 구장 날씨, 만보기">
+<meta property="og:type" content="website">
+<meta property="og:title" content="파크노트 - 파크골프 점수표">
+<meta property="og:description" content="링크를 누르면 경기 점수표를 볼 수 있어요. ☕ 커피향기 제작">
+<meta property="og:image" content="https://sanggak7-ship-it.github.io/parkgolf-scorebook/icon-512.png">
 <!--/pwa-->
 <title>파크노트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -96,6 +101,33 @@ html.night .icon-btn .i-sun{display:block}
 .btn.kakao{background:#FEE500;color:#191600;box-shadow:0 10px 22px -12px rgba(120,100,0,.6)}
 .btn.big{min-height:3.5rem;font-size:1.125rem}
 .qr-card{display:grid;gap:.875rem}
+.wx-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.75rem;width:100%;padding:.625rem .75rem .625rem .875rem;border-radius:var(--r);border:1px solid var(--hair);background:var(--surface);box-shadow:var(--shadow);text-align:left;color:var(--ink)}
+.wx-ico{color:var(--accent);display:grid}
+.wx-ico svg{width:2.5rem;height:2.5rem;display:block}
+.wx-main{min-width:0;display:grid;gap:.125rem}
+.wx-main b{font-size:1.0625rem;font-weight:800;line-height:1.2}
+.wx-main b .num{font-size:1.375rem;font-weight:700}
+.wx-main span{font-size:.8125rem;color:var(--ink-2);line-height:1.35}
+.wx-go{color:var(--ink-3)}
+.wx-now{display:flex;align-items:center;gap:1rem}
+.wx-big svg{width:4.5rem;height:4.5rem;display:block}
+.wx-now b{display:block;font-size:2.75rem;font-weight:600;line-height:1}
+.wx-now span{display:block;font-size:.9375rem;color:var(--ink-2)}
+.wx-adv{margin:0;padding:0;list-style:none;display:grid;gap:.375rem}
+.wx-adv li{padding:.625rem .875rem;border-radius:var(--r-sm);background:var(--surface-2);font-weight:700;font-size:1rem;border-left:4px solid var(--accent)}
+.wx-adv li[data-k="rain"],.wx-adv li[data-k="cold"]{border-left-color:var(--under)}
+.wx-adv li[data-k="wind"],.wx-adv li[data-k="temp"]{border-left-color:var(--ink-3)}
+.wx-adv li[data-k="uv"],.wx-adv li[data-k="hot"]{border-left-color:var(--over)}
+.hours{display:grid;grid-auto-flow:column;grid-auto-columns:3.75rem;gap:.375rem;overflow-x:auto;padding-bottom:.25rem;-webkit-overflow-scrolling:touch}
+.hr{display:grid;justify-items:center;gap:.125rem;padding:.5rem 0;border-radius:var(--r-sm);background:var(--surface-2);font-size:.8125rem;color:var(--ink-2)}
+.hr svg{width:2rem;height:2rem}
+.hr b{font-size:1.125rem;font-weight:700;color:var(--ink)}
+.hr small{color:var(--under);font-weight:700;min-height:1.1em}
+.viewer{position:fixed;inset:0;z-index:45;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.viewer-in{max-width:34rem;margin:0 auto;padding:calc(1rem + env(safe-area-inset-top,0px)) 1rem calc(7rem + env(safe-area-inset-bottom,0px));display:grid;gap:.875rem}
+.viewer-bar{position:fixed;left:0;right:0;bottom:0;z-index:46;padding:.75rem 1rem calc(.75rem + env(safe-area-inset-bottom,0px));background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--hair)}
+.viewer-bar-in{max-width:34rem;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.viewer-bar .btn{min-height:3.25rem}
 .qr-head{display:flex;gap:.75rem;align-items:center}
 .qr-head>div{min-width:0}
 .qr-head b{display:block;font-weight:800;font-size:1rem}
@@ -158,6 +190,11 @@ textarea.inp{min-height:4.5rem;resize:vertical;line-height:1.45}
 .pin{position:relative}
 .pin .inp{padding-left:2.75rem}
 .pin .idx{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:1.5rem;height:1.5rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:.875rem;pointer-events:none}
+.pset{display:grid;grid-template-columns:minmax(0,1fr);gap:.5rem;align-items:center}
+.pset.with-hcp{grid-template-columns:minmax(0,1fr) 6.25rem}
+.hcp{position:relative;display:block}
+.hcp span{position:absolute;left:.625rem;top:50%;transform:translateY(-50%);font-size:.75rem;font-weight:800;color:var(--ink-3);pointer-events:none}
+.hcp .inp{padding-left:2.75rem;text-align:right}
 .chips{display:flex;gap:.375rem;flex-wrap:wrap}
 .chip{min-height:2.375rem;padding:0 .875rem;border-radius:999px;border:0;background:var(--surface-2);font-weight:500;font-size:.9375rem;color:var(--ink-2)}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:700}
@@ -405,6 +442,12 @@ tfoot .num{font-size:1.375rem;font-weight:700}
       <button id="sampleNew" class="btn pri" type="button">새 경기 시작</button>
     </div>
 
+    <button id="wxStrip" class="wx-strip" type="button" aria-haspopup="dialog">
+      <span id="wxIcon" class="wx-ico"></span>
+      <span class="wx-main"><b id="wxTemp">구장 날씨</b><span id="wxLine"></span></span>
+      <svg class="wx-go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+
     <div class="hero" id="holeHero">
       <div id="ctabs" class="ctabs"></div>
       <div class="hmid">
@@ -470,6 +513,13 @@ tfoot .num{font-size:1.375rem;font-weight:700}
             <span class="small muted">최근 이름 · 누르면 빈 칸에 들어갑니다</span>
             <div id="nameChips" class="chips"></div>
           </div>
+        </div>
+        <div class="field">
+          <div class="row between"><span class="label">핸디캡</span>
+            <div id="segHcp" class="seg" role="group" aria-label="핸디캡 사용"><button type="button" data-hcpon="0">안 씀</button><button type="button" data-hcpon="1">사용</button></div>
+          </div>
+          <p class="small muted">실력 차이를 맞추려고 각자 빼주는 타수예요. 켜면 이름 옆에 핸디 칸이 생기고, 경기가 끝나면 ‘실제 타수 − 핸디’로 순위를 매겨요.</p>
+          <button id="hcpSuggest" class="link-btn small" type="button" hidden>저장된 기록 평균으로 핸디 채우기</button>
         </div>
       </div>
     </details>
@@ -609,9 +659,10 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     <div class="btn-grid">
       <button id="copyImgBtn" class="btn" type="button">사진 복사</button>
       <a id="saveImgBtn" class="btn" href="#" download="parknote.png">사진 저장</a>
-      <button id="shareTxtBtn" class="btn full" type="button">글자로 보내기</button>
+      <button id="shareLinkBtn" class="btn" type="button">링크로 보내기</button>
+      <button id="shareTxtBtn" class="btn" type="button">글자로 보내기</button>
     </div>
-    <p class="small muted">보내기 창이 뜨면 <b>카카오톡</b>을 고르세요. 버튼이 안 되면 사진을 길게 눌러 저장한 뒤 카카오톡에서 보내면 됩니다.</p>
+    <p class="small muted">보내기 창이 뜨면 <b>카카오톡</b>을 고르세요. <b>링크로 보내기</b>는 받은 사람이 링크만 누르면 앱 없이도 전체 점수표를 볼 수 있어요.</p>
   </div>
 </div>
 <div id="installSheet" class="sheet" hidden>
@@ -620,6 +671,29 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     <div class="row between"><h3>홈 화면에 파크노트 추가</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
     <p class="muted">한 번 추가해 두면 앱처럼 아이콘을 눌러 바로 열 수 있어요.</p>
     <ol id="howto" class="howto"></ol>
+  </div>
+</div>
+<section id="viewer" class="viewer" hidden aria-label="받은 점수표">
+  <div class="viewer-in">
+    <div class="row between"><span class="label">링크로 받은 점수표</span><button id="vClose" class="pill-btn" type="button">닫기</button></div>
+    <div class="hero res-hero"><div><div id="vMeta" class="meta"></div><h2>파크골프 경기 결과</h2></div><div id="vWinner"></div></div>
+    <div id="vKakao" class="notice" hidden><span>카카오톡 안에서 열렸어요. 내 파크노트에 저장하려면 오른쪽 아래 <b>⋮</b> → <b>다른 브라우저로 열기</b>를 누른 뒤 저장하세요.</span></div>
+    <div class="card stack"><h3>순위</h3><div id="vLeader" class="lb"></div></div>
+    <div id="vCards" class="stack" style="gap:1.25rem"></div>
+    <p class="credit">파크노트 · ☕ 만든이 커피향기</p>
+  </div>
+  <div class="viewer-bar"><div class="viewer-bar-in"><button id="vSave" class="btn" type="button">내 기록에 저장</button><button id="vUse" class="btn pri" type="button">이어서 입력하기</button></div></div>
+</section>
+<div id="wxSheet" class="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="구장 날씨">
+    <span class="grab" aria-hidden="true"></span>
+    <div class="row between"><h3 id="wxTitle">구장 날씨</h3><button class="pill-btn" type="button" data-close>닫기</button></div>
+    <div id="wxBody" class="stack"></div>
+    <div class="btn-grid">
+      <button id="wxLocate" class="btn pri full" type="button">지금 있는 곳 날씨 보기</button>
+      <a class="btn full" href="https://map.naver.com/p/search/%ED%8C%8C%ED%81%AC%EA%B3%A8%ED%94%84%EC%9E%A5" target="_blank" rel="noopener">주변 파크골프장 지도 보기</a>
+    </div>
+    <p class="small muted">날씨 정보: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (기상청 등 예보 자료)</p>
   </div>
 </div>
 <div id="qrSheet" class="sheet" hidden>
@@ -678,7 +752,8 @@ function tpCls(d){ return d > 0 ? 'tp-pos' : (d < 0 ? 'tp-neg' : ''); }
 function makeRound(prev){
   var r = {
     id: uid(), date: today(), venue: '', group: '', nP: 4, nC: 2,
-    players: [], courses: [], scores: grid(null), ob: grid(0), note: '', steps: 0, sample: false, cur: { c:0, h:0 }
+    players: [], courses: [], scores: grid(null), ob: grid(0), note: '', steps: 0, sample: false, cur: { c:0, h:0 },
+    useHcp: false, hcp: [0,0,0,0,0,0]
   };
   for (var p=0;p<MAXP;p++) r.players.push({ name: '' });
   for (var c=0;c<MAXC;c++) r.courses.push({ name: LETTERS[c], pars: DEFAULT_PARS.slice() });
@@ -686,6 +761,7 @@ function makeRound(prev){
     r.venue = prev.venue; r.nP = prev.nP; r.nC = prev.nC;
     for (p=0;p<MAXP;p++) r.players[p].name = prev.players[p].name;
     for (c=0;c<MAXC;c++) r.courses[c] = { name: prev.courses[c].name, pars: prev.courses[c].pars.slice() };
+    r.useHcp = !!prev.useHcp; r.hcp = norm(prev).hcp.slice();
   }
   return r;
 }
@@ -728,6 +804,7 @@ var venues = store.get(K.venues, {});
 var steps = store.get(K.steps, { days:{} });
 if (!round || !round.scores){ round = sampleRound(); }
 if (!Array.isArray(history)){ history = sampleHistory(); }
+norm(round); history.forEach(norm);
 var tab = 'play';
 
 function saveRound(){ store.set(K.round, round); }
@@ -748,6 +825,8 @@ function resultOf(s, par){
   if (d === 3) return { k:'double', t:'트리플' };
   return { k:'double', t:'+' + d };
 }
+function norm(r){ if (r){ if (!Array.isArray(r.hcp)) r.hcp = [0,0,0,0,0,0]; while (r.hcp.length < MAXP) r.hcp.push(0); r.useHcp = !!r.useHcp; } return r; }
+function hc(r, p){ return r.useHcp ? (+r.hcp[p] || 0) : 0; }
 function pName(r, p){ return (r.players[p].name || '').trim() || ('경기자 ' + (p+1)); }
 function cName(r, c){ return (r.courses[c].name || '').trim() || LETTERS[c]; }
 function stats(r, p){
@@ -772,7 +851,8 @@ function ranking(r, tieMode){
   var total = r.nC * HOLES, rows = [];
   for (var p=0;p<r.nP;p++){ var st = stats(r,p); if (st.played) rows.push({ p:p, st:st }); }
   var allDone = rows.length > 0 && rows.length === r.nP && rows.every(function(x){ return x.st.played === total; });
-  var key = function(x){ return allDone ? x.st.strokes : x.st.tp; };
+  var useH = !!r.useHcp && allDone;
+  var key = function(x){ return allDone ? x.st.strokes - (useH ? hc(r, x.p) : 0) : x.st.tp; };
   var useCB = tieMode === 'countback' && allDone;
   function cbList(x){
     var a = [], c, h;
@@ -789,10 +869,11 @@ function ranking(r, tieMode){
   rows.sort(function(a,b){ return cmp(a,b) || a.p - b.p; });
   rows.forEach(function(x, i){ x.rank = (i > 0 && cmp(rows[i-1], x) === 0) ? rows[i-1].rank : i + 1; });
   rows.forEach(function(x){
+    x.net = useH ? x.st.strokes - hc(r, x.p) : null;
     x.tied = rows.some(function(y){ return y !== x && y.rank === x.rank; });
     x.byCB = useCB && rows.some(function(y){ return y !== x && key(y) === key(x) && y.rank !== x.rank; });
   });
-  return { rows:rows, allDone:allDone, total:total };
+  return { rows:rows, allDone:allDone, total:total, useH:useH };
 }
 function hasScores(r){ for (var c=0;c<MAXC;c++) for (var p=0;p<MAXP;p++) for (var h=0;h<HOLES;h++) if (r.scores[c][p][h] != null) return true; return false; }
 
@@ -835,8 +916,11 @@ function renderSetup(){
   $('#segCourses').innerHTML = sc;
   var cnh = ''; for (var c=0;c<round.nC;c++) cnh += '<div class="pin"><span class="idx">' + (c+1) + '</span><input class="inp" data-cname="' + c + '" value="' + esc(round.courses[c].name) + '" aria-label="' + (c+1) + '번째 코스 이름" maxlength="8"></div>';
   $('#courseNames').innerHTML = cnh;
-  var ph = ''; for (var p=0;p<round.nP;p++) ph += '<div class="pin"><span class="idx">' + (p+1) + '</span><input class="inp" data-pname="' + p + '" value="' + esc(round.players[p].name) + '" placeholder="경기자 ' + (p+1) + '" aria-label="경기자 ' + (p+1) + ' 이름" maxlength="10" autocomplete="off"></div>';
+  var ph = ''; for (var p=0;p<round.nP;p++) ph += '<div class="pset' + (round.useHcp ? ' with-hcp' : '') + '"><div class="pin"><span class="idx">' + (p+1) + '</span><input class="inp" data-pname="' + p + '" value="' + esc(round.players[p].name) + '" placeholder="경기자 ' + (p+1) + '" aria-label="경기자 ' + (p+1) + ' 이름" maxlength="10" autocomplete="off"></div>'
+    + (round.useHcp ? '<label class="hcp"><span>핸디</span><input class="inp num" data-hcp="' + p + '" type="number" inputmode="numeric" min="0" max="54" value="' + (+round.hcp[p] || 0) + '" aria-label="경기자 ' + (p+1) + ' 핸디캡"></label>' : '') + '</div>';
   $('#playerInputs').innerHTML = ph;
+  $$('#segHcp button').forEach(function(b){ b.setAttribute('aria-pressed', (b.dataset.hcpon === '1') === !!round.useHcp ? 'true' : 'false'); });
+  $('#hcpSuggest').hidden = !round.useHcp;
   renderNameChips(); renderSetupSummary();
 }
 function renderNameChips(){
@@ -859,6 +943,7 @@ $('#setup').addEventListener('input', function(e){
   else if (t.id === 'fVenue') round.venue = t.value;
   else if (t.dataset.pname != null) round.players[+t.dataset.pname].name = t.value;
   else if (t.dataset.cname != null) round.courses[+t.dataset.cname].name = t.value;
+  else if (t.dataset.hcp != null){ var hv = Math.round(+t.value); round.hcp[+t.dataset.hcp] = hv >= 0 && hv <= 54 ? hv : 0; }
   saveRound(); renderTop(); renderSetupSummary();
   if (t.dataset.pname != null || t.dataset.cname != null) renderHole();
 });
@@ -867,11 +952,14 @@ $('#setup').addEventListener('change', function(e){
   if (t.id === 'fVenue'){
     var nm = t.value.trim();
     if (venues[nm] && !hasScores(round)){ applyVenue(nm); saveRound(); renderSetup(); renderHole(); toast(nm + '의 코스와 파를 불러왔어요'); }
+    if (venueLoc[nm]) loadWx(false); else renderWx();
   }
   if (t.dataset.pname != null) renderNameChips();
 });
 $('#setup').addEventListener('click', function(e){
   var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.hcpon != null){ round.useHcp = b.dataset.hcpon === '1'; saveRound(); renderSetup(); return; }
+  if (b.id === 'hcpSuggest'){ suggestHcp(); return; }
   if (b.dataset.np){ round.nP = +b.dataset.np; saveRound(); renderSetup(); renderHole(); renderTop(); }
   else if (b.dataset.nc){ round.nC = +b.dataset.nc; fixCur(); saveRound(); renderSetup(); renderHole(); }
   else if (b.dataset.chip != null){
@@ -888,6 +976,18 @@ $('#setup').addEventListener('click', function(e){
 $('#setup').addEventListener('toggle', function(){
   if ($('#setup').open && round.sample){ round = makeRound(); saveRound(); renderAll(); toast('예시를 지우고 새 경기를 시작했어요'); }
 });
+// suggested handicap = how many strokes over par this player averages for this round's length, from saved rounds
+function suggestHcp(){
+  var holes = round.nC * HOLES, filled = 0;
+  for (var p=0;p<round.nP;p++){
+    var nm = (round.players[p].name || '').trim(); if (!nm) continue;
+    var tp = 0, played = 0;
+    history.forEach(function(r){ for (var q=0;q<r.nP;q++) if ((r.players[q].name || '').trim() === nm){ var st = stats(r, q); tp += st.tp; played += st.played; } });
+    if (played >= 9){ round.hcp[p] = Math.max(0, Math.round(tp / played * holes)); filled++; }
+  }
+  saveRound(); renderSetup();
+  toast(filled ? filled + '명의 핸디를 기록 평균으로 채웠어요.\n숫자는 직접 고칠 수 있어요' : '저장된 기록(9홀 이상)이 있는 사람이 없어요', 3200);
+}
 function fixCur(){ if (round.cur.c >= round.nC){ round.cur.c = round.nC - 1; round.cur.h = 0; } }
 
 /* ---------- hole entry ---------- */
@@ -983,60 +1083,72 @@ $('#nextBtn').addEventListener('click', function(){
 $('#sampleNew').addEventListener('click', function(){ round = makeRound(); saveRound(); renderAll(); $('#setup').open = true; $('#setup').scrollIntoView({ block:'start', behavior:'smooth' }); toast('새 경기를 시작했어요. 구장과 이름을 입력하세요'); });
 
 /* ---------- scorecard ---------- */
-function renderCard(){
+function cardHtml(r, live){
   var html = '';
-  for (var c=0;c<round.nC;c++){
-    var pars = round.courses[c].pars, sumPar = pars.reduce(function(a,b){ return a+b; },0);
-    html += '<div class="stack" style="gap:.5rem"><div class="course-h"><h3>' + esc(cName(round,c)) + '코스</h3><span class="small muted num">PAR ' + sumPar + '</span></div><div class="tbl-wrap"><table><thead><tr><th>홀</th><th>파</th>';
-    for (var p=0;p<round.nP;p++) html += '<th class="pl">' + esc(pName(round,p)) + '</th>';
+  for (var c=0;c<r.nC;c++){
+    var pars = r.courses[c].pars, sumPar = pars.reduce(function(a,b){ return a+b; },0);
+    html += '<div class="stack" style="gap:.5rem"><div class="course-h"><h3>' + esc(cName(r,c)) + '코스</h3><span class="small muted num">PAR ' + sumPar + '</span></div><div class="tbl-wrap"><table><thead><tr><th>홀</th><th>파</th>';
+    for (var p=0;p<r.nP;p++) html += '<th class="pl">' + esc(pName(r,p)) + '</th>';
     html += '</tr></thead><tbody>';
     for (var h=0;h<HOLES;h++){
-      var cur = round.cur.c === c && round.cur.h === h;
+      var cur = live && r.cur.c === c && r.cur.h === h;
       html += '<tr><td class="hole' + (cur ? ' cur' : '') + '">' + (h+1) + '</td><td class="par">' + pars[h] + '</td>';
-      for (p=0;p<round.nP;p++){
-        var s = round.scores[c][p][h], res = resultOf(s, pars[h]), ob = round.ob[c][p][h];
-        html += '<td><button type="button" class="cellbtn" data-c="' + c + '" data-h="' + h + '" aria-label="' + esc(pName(round,p)) + ' ' + (h+1) + '번 홀 ' + (s == null ? '미입력' : s + '타 ' + res.t) + (ob ? ' OB' : '') + '"><i class="mk ' + (s == null ? 'empty' : res.k) + '">' + (s == null ? '·' : s) + '</i>' + (ob ? '<i class="ob-tag">OB</i>' : '') + '</button></td>';
+      for (p=0;p<r.nP;p++){
+        var s = r.scores[c][p][h], res = resultOf(s, pars[h]), ob = r.ob[c][p][h];
+        var label = esc(pName(r,p)) + ' ' + (h+1) + '번 홀 ' + (s == null ? '미입력' : s + '타 ' + res.t) + (ob ? ' OB' : '');
+        var inner = '<i class="mk ' + (s == null ? 'empty' : res.k) + '">' + (s == null ? '·' : s) + '</i>' + (ob ? '<i class="ob-tag">OB</i>' : '');
+        html += '<td>' + (live ? '<button type="button" class="cellbtn" data-c="' + c + '" data-h="' + h + '" aria-label="' + label + '">' + inner + '</button>' : '<span class="cellbtn" role="img" aria-label="' + label + '">' + inner + '</span>') + '</td>';
       }
       html += '</tr>';
     }
     html += '</tbody><tfoot><tr><th colspan="2">합계</th>';
-    for (p=0;p<round.nP;p++){
-      var cs = stats(round,p).course[c];
+    for (p=0;p<r.nP;p++){
+      var cs = stats(r,p).course[c];
       html += '<td>' + (cs ? '<span class="num">' + cs.s + '</span> <span class="small ' + tpCls(cs.s - cs.par) + '">' + tpText(cs.s - cs.par) + '</span>' : '<span class="muted">—</span>') + '</td>';
     }
     html += '</tr></tfoot></table></div></div>';
   }
-  $('#cardTables').innerHTML = html;
+  return html;
 }
+function renderCard(){ $('#cardTables').innerHTML = cardHtml(round, true); }
 $('#cardTables').addEventListener('click', function(e){
   var b = e.target.closest('.cellbtn'); if (!b) return;
   round.cur = { c:+b.dataset.c, h:+b.dataset.h }; saveRound(); setTab('play');
 });
 
 /* ---------- results ---------- */
+function winnerHtml(r, rk){
+  var leaders = rk.rows.filter(function(x){ return x.rank === 1; });
+  if (!leaders.length) return '<div class="winner"><div><span>아직 입력된 점수가 없어요</span><b>첫 홀 점수를 넣어 보세요</b></div></div>';
+  var top = leaders[0];
+  return '<div class="winner"><span class="crown">' + CROWN + '</span><div><span>' + (rk.allDone ? (leaders.length > 1 ? '공동 우승' : '우승') : '현재 선두') + '</span><b>' + leaders.map(function(x){ return esc(pName(r,x.p)); }).join(', ') + '</b></div>'
+    + '<div class="sc"><b>' + (rk.useH ? top.net : top.st.strokes) + '</b><br><span>' + (rk.useH ? '핸디 적용' : tpText(top.st.tp)) + '</span></div></div>';
+}
+function tieHelpText(r, rk){
+  var t = settings.tie === 'countback'
+    ? '타수가 같으면 마지막 코스 합계 → 마지막 홀부터 거꾸로 비교해 적은 사람이 앞섭니다. 모든 홀을 마친 뒤 적용됩니다.'
+    : '타수가 같으면 같은 순위로 표시합니다.' + (rk.rows.length && !rk.allDone ? ' 경기 중에는 친 홀까지의 파 대비 점수로 순위를 매깁니다.' : '');
+  if (r.useHcp) t += rk.useH ? ' 핸디캡을 뺀 점수(실타수 − 핸디)로 순위를 매겼어요.' : ' 핸디캡은 모든 홀을 마치면 순위에 반영돼요.';
+  return t;
+}
+function leaderHtml(r, rk){
+  if (!rk.rows.length) return '<div class="empty-note">입력 화면에서 첫 홀 점수를 넣으면 순위가 나타납니다.</div>';
+  return rk.rows.map(function(x){
+    var note = x.st.played + '/' + rk.total + '홀' + (rk.useH ? ' · 실타 ' + x.st.strokes : '') + (x.st.ace ? ' · 홀인원 ' + x.st.ace : '') + (x.st.ob ? ' · OB ' + x.st.ob : '');
+    return '<div class="lb-row' + (x.rank === 1 ? ' first' : '') + '"><div class="medal">' + x.rank + (x.tied ? '<small>공동</small>' : (x.byCB ? '<small>백카운트</small>' : '')) + '</div>'
+      + '<div class="lb-name"><b>' + esc(pName(r,x.p)) + '</b><span>' + note + '</span></div>'
+      + '<div class="lb-score"><span class="num">' + (rk.useH ? x.net : x.st.strokes) + '</span><span class="tp ' + (rk.useH ? '' : tpCls(x.st.tp)) + '">' + (rk.useH ? '핸디 ' + hc(r, x.p) : tpText(x.st.tp)) + '</span></div></div>';
+  }).join('');
+}
 var CROWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
 function renderResults(){
   var rk = ranking(round, settings.tie);
   var cn = []; for (var c=0;c<round.nC;c++) cn.push(cName(round,c));
   $('#resMeta').textContent = [fmtDate(round.date), round.venue, round.group, cn.join('·') + '코스'].filter(Boolean).join(' · ');
-  var leaders = rk.rows.filter(function(x){ return x.rank === 1; });
-  $('#winner').innerHTML = leaders.length
-    ? '<div class="winner"><span class="crown">' + CROWN + '</span><div><span>' + (rk.allDone ? (leaders.length > 1 ? '공동 우승' : '우승') : '현재 선두') + '</span><b>' + leaders.map(function(x){ return esc(pName(round,x.p)); }).join(', ') + '</b></div>'
-      + '<div class="sc"><b>' + leaders[0].st.strokes + '</b><br><span>' + tpText(leaders[0].st.tp) + '</span></div></div>'
-    : '<div class="winner"><div><span>아직 입력된 점수가 없어요</span><b>첫 홀 점수를 넣어 보세요</b></div></div>';
+  $('#winner').innerHTML = winnerHtml(round, rk);
   $$('#segTie button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.tie === settings.tie ? 'true' : 'false'); });
-  $('#tieHelp').textContent = settings.tie === 'countback'
-    ? '타수가 같으면 마지막 코스 합계 → 마지막 홀부터 거꾸로 비교해 적은 사람이 앞섭니다. 모든 홀을 마친 뒤 적용됩니다.'
-    : '타수가 같으면 같은 순위로 표시합니다.' + (rk.rows.length && !rk.allDone ? ' 경기 중에는 친 홀까지의 파 대비 점수로 순위를 매깁니다.' : '');
-  var html = '';
-  if (!rk.rows.length) html = '<div class="empty-note">입력 화면에서 첫 홀 점수를 넣으면 순위가 나타납니다.</div>';
-  rk.rows.forEach(function(x){
-    var note = x.st.played + '/' + rk.total + '홀' + (x.st.ace ? ' · 홀인원 ' + x.st.ace : '') + (x.st.ob ? ' · OB ' + x.st.ob : '');
-    html += '<div class="lb-row' + (x.rank === 1 ? ' first' : '') + '"><div class="medal">' + x.rank + (x.tied ? '<small>공동</small>' : (x.byCB ? '<small>백카운트</small>' : '')) + '</div>'
-      + '<div class="lb-name"><b>' + esc(pName(round,x.p)) + '</b><span>' + note + '</span></div>'
-      + '<div class="lb-score"><span class="num">' + x.st.strokes + '</span><span class="tp ' + tpCls(x.st.tp) + '">' + tpText(x.st.tp) + '</span></div></div>';
-  });
-  $('#leader').innerHTML = html;
+  $('#tieHelp').textContent = tieHelpText(round, rk);
+  $('#leader').innerHTML = leaderHtml(round, rk);
 
   var sts = []; for (var p=0;p<round.nP;p++) sts.push(stats(round,p));
   var head = '<thead><tr><th>코스</th>' + sts.map(function(_,p){ return '<th class="pl">' + esc(pName(round,p)) + '</th>'; }).join('') + '</tr></thead>';
@@ -1067,7 +1179,7 @@ function buildText(r){
   L.push('');
   rk.rows.forEach(function(x){
     var cs = x.st.course.map(function(v){ return v ? v.s : '-'; }).join('/');
-    L.push(x.rank + '위 ' + pName(r,x.p) + '  ' + x.st.strokes + '타 (' + tpPlain(x.st.tp) + ')  [' + cs + ']' + (x.st.ace ? ' 🎯홀인원' + x.st.ace : ''));
+    L.push(x.rank + '위 ' + pName(r,x.p) + '  ' + (rk.useH ? x.net + '타 (실타 ' + x.st.strokes + ', 핸디 ' + hc(r, x.p) + ')' : x.st.strokes + '타 (' + tpPlain(x.st.tp) + ')') + '  [' + cs + ']' + (x.st.ace ? ' 🎯홀인원' + x.st.ace : ''));
   });
   if (r.steps) L.push('', '👟 ' + comma(r.steps) + '보');
   if (r.note) L.push('', '📝 ' + r.note);
@@ -1136,9 +1248,10 @@ function drawImage(r, mode){
     var mid = y + h/2;
     g.fillStyle = first ? C.brass : C.band; g.beginPath(); g.arc(pad + 40, mid, 30, 0, Math.PI*2); g.fill();
     g.fillStyle = first ? '#FFFFFF' : C.muted; g.font = '700 36px ' + FN; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(x.rank), pad + 40, mid + 2);
-    g.textAlign = 'left'; g.fillStyle = C.ink; g.font = '800 40px ' + FB; g.fillText(clip(g, pName(r,x.p), 520), pad + 100, mid + 2);
-    g.textAlign = 'right'; g.font = '600 64px ' + FN; g.fillText(String(x.st.strokes), W - pad - 120, mid + 4);
-    g.font = '600 38px ' + FN; g.fillStyle = x.st.tp > 0 ? C.over : (x.st.tp < 0 ? C.under : C.faint); g.fillText(tpPlain(x.st.tp), W - pad - 16, mid + 4);
+    g.textAlign = 'left'; g.fillStyle = C.ink; g.font = '800 40px ' + FB; g.fillText(clip(g, pName(r,x.p), 520), pad + 100, rk.useH ? mid - 12 : mid + 2);
+    if (rk.useH){ g.fillStyle = C.faint; g.font = '700 26px ' + FB; g.fillText('실타 ' + x.st.strokes + ' · 핸디 ' + hc(r, x.p), pad + 100, mid + 26); }
+    g.textAlign = 'right'; g.fillStyle = C.ink; g.font = '600 64px ' + FN; g.fillText(String(rk.useH ? x.net : x.st.strokes), W - pad - 120, mid + 4);
+    g.font = '600 38px ' + FN; g.fillStyle = rk.useH ? C.faint : (x.st.tp > 0 ? C.over : (x.st.tp < 0 ? C.under : C.faint)); g.fillText(rk.useH ? 'NET' : tpPlain(x.st.tp), W - pad - 16, mid + 4);
     g.textAlign = 'left'; g.textBaseline = 'alphabetic';
     y += rowH;
   });
@@ -1319,7 +1432,8 @@ function encodeRound(r){
     var s = r.scores[c][p][h]; sc += s == null ? '-' : SC.charAt(Math.max(1, Math.min(15, s)));
     if (r.ob[c][p][h]) ob += '' + c + p + h;
   }
-  return QR_PREFIX + b64urlEncode(['PN1', r.date.replace(/-/g,''), clean(r.venue), clean(r.group), r.nP, r.nC, cn.join('~'), pars, nm.join('~'), sc, ob].join('|'));
+  var hp = r.useHcp ? r.hcp.slice(0, r.nP).map(function(v){ return +v || 0; }).join('~') : '';
+  return QR_PREFIX + b64urlEncode(['PN1', r.date.replace(/-/g,''), clean(r.venue), clean(r.group), r.nP, r.nC, cn.join('~'), pars, nm.join('~'), sc, ob, hp].join('|'));
 }
 function decodeRound(text){
   text = String(text || '').trim(); var at = text.indexOf(QR_PREFIX); if (at < 0) return null;
@@ -1334,6 +1448,7 @@ function decodeRound(text){
     for (p=0;p<nP;p++) r.players[p].name = nm[p] || '';
     for (c=0;c<nC;c++) for (p=0;p<nP;p++) for (h=0;h<HOLES;h++){ var i = SC.indexOf(f[9].charAt(k++)); r.scores[c][p][h] = i >= 1 ? i : null; }
     for (var j=0;j+2<f[10].length;j+=3){ c = +f[10][j]; p = +f[10][j+1]; h = +f[10][j+2]; if (c < nC && p < nP && h < HOLES) r.ob[c][p][h] = 1; }
+    if (f[11]){ r.useHcp = true; f[11].split('~').forEach(function(v, i){ if (i < MAXP){ var n = Math.round(+v); r.hcp[i] = n >= 0 && n <= 54 ? n : 0; } }); }
     return r;
   } catch(e){ return null; }
 }
@@ -1369,6 +1484,7 @@ function planMerge(inc){
 }
 function applyMerge(plan){
   var inc = plan.inc, c, h, ip;
+  $('#viewer').hidden = true;
   if (plan.adopt){ inc.id = uid(); round = inc; saveRound(); renderAll(); setTab('play'); toast('받은 경기를 가져왔어요 (점수 ' + countScores(inc) + '개)', 2800); return; }
   for (c=round.nC;c<inc.nC;c++){ round.courses[c] = { name: inc.courses[c].name, pars: inc.courses[c].pars.slice() }; for (var x=0;x<MAXP;x++) for (h=0;h<HOLES;h++){ round.scores[c][x][h] = null; round.ob[c][x][h] = 0; } }
   plan.added.forEach(function(a){
@@ -1511,6 +1627,180 @@ document.addEventListener('click', function(e){
   var b = e.target.closest('[data-qr]'); if (!b) return;
   if (b.dataset.qr === 'show') showQr(); else startScan();
 });
+
+/* ---------- share as a link: the whole scorecard rides in the URL, no server needed ---------- */
+var APP_URL = 'https://sanggak7-ship-it.github.io/parkgolf-scorebook/';
+function appUrl(){ return /github\.io$/.test(location.hostname) ? location.origin + location.pathname.replace(/index\.html$/, '') : APP_URL; }
+function shareUrl(r){ return appUrl() + '#r=' + encodeRound(r).slice(QR_PREFIX.length); }
+function linkMessage(r){
+  var rk = ranking(r, settings.tie), top = rk.rows[0];
+  return '⛳ ' + [fmtDate(r.date), r.venue].filter(Boolean).join(' ') + ' 경기 결과'
+    + (top ? '\n1위 ' + pName(r, top.p) + ' ' + (rk.useH ? top.net : top.st.strokes) + '타' : '')
+    + '\n링크를 누르면 전체 점수표를 볼 수 있어요.';
+}
+$('#shareLinkBtn').addEventListener('click', function(){
+  var r = shot.r, url = shareUrl(r), text = linkMessage(r);
+  if (navigator.share){ navigator.share({ text: text, url: url }).catch(function(err){ if (err && err.name === 'AbortError') return; copyText(text + '\n' + url); }); }
+  else copyText(text + '\n' + url);
+});
+var viewed = null;
+function openViewer(r){
+  viewed = r;
+  var rk = ranking(r, settings.tie), cn = []; for (var c=0;c<r.nC;c++) cn.push(cName(r,c));
+  $('#vMeta').textContent = [fmtDate(r.date), r.venue, r.group, cn.join('·') + '코스'].filter(Boolean).join(' · ');
+  $('#vWinner').innerHTML = winnerHtml(r, rk);
+  $('#vLeader').innerHTML = leaderHtml(r, rk);
+  $('#vCards').innerHTML = cardHtml(r, false);
+  $('#vKakao').hidden = !/KAKAOTALK/i.test(navigator.userAgent || '');
+  var v = $('#viewer'); v.hidden = false; v.scrollTop = 0;
+}
+function checkLink(){
+  var h = location.hash || ''; if (h.indexOf('#r=') !== 0) return;
+  var inc = decodeRound(QR_PREFIX + h.slice(3));
+  try { window.history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  if (inc) openViewer(inc); else toast('링크의 점수표를 읽지 못했어요', 2600);
+}
+window.addEventListener('hashchange', checkLink);
+$('#vClose').addEventListener('click', function(){ $('#viewer').hidden = true; });
+$('#vSave').addEventListener('click', function(){
+  if (!viewed) return;
+  var key = encodeRound(viewed);
+  if (history.some(function(x){ return encodeRound(x) === key; })){ toast('이미 내 기록에 있어요'); return; }
+  var copy = JSON.parse(JSON.stringify(viewed)); copy.id = uid(); copy.savedAt = Date.now(); copy.sample = false;
+  history = history.filter(function(x){ return !x.sample; }); history.unshift(copy); saveHist();
+  toast('내 기록에 저장했어요 (기록 탭에서 볼 수 있어요)', 2800);
+});
+$('#vUse').addEventListener('click', function(){
+  if (!viewed) return;
+  var plan = planMerge(viewed);
+  if (plan.adopt){ applyMerge(plan); return; }
+  qrPlan = plan; renderPlan(); setQrMode('merge'); openSheet('#qrSheet');
+});
+
+/* ---------- course weather (Open-Meteo, no key; KMA models included) ---------- */
+var K_WX = 'pgsb_wx', K_LOC = 'pgsb_venueloc';
+var wx = store.get(K_WX, null), venueLoc = store.get(K_LOC, {}), wxState = 'idle';
+var WXI = {
+  sun:'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="9" fill="#F4B400"/><g stroke="#F4B400" stroke-width="3" stroke-linecap="round"><path d="M24 6v4M24 38v4M6 24h4M38 24h4M11.3 11.3l2.8 2.8M33.9 33.9l2.8 2.8M11.3 36.7l2.8-2.8M33.9 14.1l2.8-2.8"/></g></svg>',
+  moon:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M34 31.5A13 13 0 0 1 20.5 12 13 13 0 1 0 36 32.8z" fill="#E7C25C"/></svg>',
+  partly:'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="18" cy="17" r="7" fill="#F4B400"/><g stroke="#F4B400" stroke-width="2.6" stroke-linecap="round"><path d="M18 5v3M6 17h3M9.5 8.5l2 2M26.5 8.5l-2 2"/></g><path d="M16 38h19a7 7 0 0 0 0-14 10 10 0 0 0-18.6 2.6A5.7 5.7 0 0 0 16 38z" fill="#B9C3BE"/></svg>',
+  cloud:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 36h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3.2A6.4 6.4 0 0 0 14 36z" fill="#A9B4AE"/></svg>',
+  fog:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 28h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3.2A6.4 6.4 0 0 0 14 28z" fill="#B9C3BE"/><g stroke="#A9B4AE" stroke-width="3" stroke-linecap="round"><path d="M10 34h28M14 40h20"/></g></svg>',
+  rain:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 30h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3.2A6.4 6.4 0 0 0 14 30z" fill="#A9B4AE"/><g stroke="#3B82D6" stroke-width="3" stroke-linecap="round"><path d="M17 35l-2 5M25 35l-2 5M33 35l-2 5"/></g></svg>',
+  snow:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 30h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3.2A6.4 6.4 0 0 0 14 30z" fill="#B9C3BE"/><g fill="#7DB5E8"><circle cx="16" cy="37" r="2.2"/><circle cx="24" cy="40" r="2.2"/><circle cx="32" cy="37" r="2.2"/></g></svg>',
+  storm:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 28h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3.2A6.4 6.4 0 0 0 14 28z" fill="#8F9A94"/><path d="M25 26l-6 10h5l-3 8 9-12h-5l3-6z" fill="#F4B400"/></svg>',
+  pin:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 42s-12-11-12-21a12 12 0 0 1 24 0c0 10-12 21-12 21z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="21" r="4.5" fill="none" stroke="currentColor" stroke-width="3"/></svg>'
+};
+function wmo(c, hour){
+  var night = hour != null && (hour >= 19 || hour < 6);
+  if (c === 0) return ['맑음', night ? 'moon' : 'sun']; if (c === 1) return ['대체로 맑음', night ? 'moon' : 'sun'];
+  if (c === 2) return ['구름 조금', night ? 'cloud' : 'partly']; if (c === 3) return ['흐림', 'cloud'];
+  if (c === 45 || c === 48) return ['안개', 'fog'];
+  if (c >= 51 && c <= 57) return ['이슬비', 'rain']; if (c >= 61 && c <= 67) return [c === 61 ? '약한 비' : (c === 65 ? '강한 비' : '비'), 'rain'];
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return ['눈', 'snow']; if (c >= 80 && c <= 82) return ['소나기', 'rain'];
+  if (c >= 95) return ['뇌우', 'storm']; return ['흐림', 'cloud'];
+}
+function hourLabel(h){ return (h < 12 ? '오전 ' : '오후 ') + (h % 12 || 12) + '시'; }
+function wxCoords(){
+  var v = (round.venue || '').trim();
+  if (v && venueLoc[v]) return { lat:venueLoc[v].lat, lon:venueLoc[v].lon, label:v };
+  if (settings.loc) return { lat:settings.loc.lat, lon:settings.loc.lon, label:'지금 있는 곳 근처' };
+  return null;
+}
+function wxUrl(c){
+  return 'https://api.open-meteo.com/v1/forecast?latitude=' + c.lat.toFixed(3) + '&longitude=' + c.lon.toFixed(3)
+    + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m'
+    + '&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m'
+    + '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max'
+    + '&timezone=Asia%2FSeoul&forecast_days=2&wind_speed_unit=ms';
+}
+function loadWx(force){
+  var c = wxCoords(); if (!c){ renderWx(); return; }
+  var key = c.lat.toFixed(2) + ',' + c.lon.toFixed(2);
+  if (!force && wx && wx.key === key && Date.now() - wx.at < 30 * 60000){ wx.label = c.label; wxState = 'ok'; renderWx(); return; }
+  wxState = 'loading'; renderWx();
+  fetch(wxUrl(c)).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(d){
+    if (!d || !d.current || !d.hourly || !d.daily) throw new Error('shape');
+    wx = { key:key, at:Date.now(), data:d, label:c.label }; store.set(K_WX, wx); wxState = 'ok'; renderWx();
+  }).catch(function(){ wxState = 'error'; renderWx(); });
+}
+function locate(){
+  if (!navigator.geolocation){ wxState = 'denied'; renderWx(); return; }
+  wxState = 'locating'; renderWx();
+  navigator.geolocation.getCurrentPosition(function(pos){
+    settings.loc = { lat:pos.coords.latitude, lon:pos.coords.longitude }; saveSettings();
+    loadWxHere();
+  }, function(){ wxState = 'denied'; renderWx(); }, { enableHighAccuracy:false, timeout:12000, maximumAge:600000 });
+}
+function loadWxHere(){
+  var c = { lat:settings.loc.lat, lon:settings.loc.lon, label:'지금 있는 곳 근처' }, key = c.lat.toFixed(2) + ',' + c.lon.toFixed(2);
+  wxState = 'loading'; renderWx();
+  fetch(wxUrl(c)).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(d){
+    if (!d || !d.current || !d.hourly || !d.daily) throw new Error('shape');
+    wx = { key:key, at:Date.now(), data:d, label:c.label, here:true }; store.set(K_WX, wx); wxState = 'ok'; renderWx();
+  }).catch(function(){ wxState = 'error'; renderWx(); });
+}
+function wxDigest(d){
+  var H = d.hourly, now = Date.now(), idx = 0, i;
+  for (i=0;i<H.time.length;i++){ if (Date.parse(H.time[i] + ':00+09:00') >= now - 30 * 60000){ idx = i; break; } }
+  var next = [];
+  for (i=idx;i<Math.min(H.time.length, idx + 12);i++) next.push({ hour:+H.time[i].slice(11,13), t:H.temperature_2m[i], pop:H.precipitation_probability ? H.precipitation_probability[i] : null, code:H.weather_code[i], wind:H.wind_speed_10m[i] });
+  var cur = d.current, nowHour = cur.time ? +String(cur.time).slice(11,13) : (next.length ? next[0].hour : new Date().getHours()), D = d.daily;
+  var tmax = D.temperature_2m_max[0], tmin = D.temperature_2m_min[0], adv = [];
+  var soon = next.slice(0, 8), rain = soon.filter(function(x){ return x.pop != null && x.pop >= 50; })[0];
+  if (cur.weather_code >= 51 && cur.weather_code !== 45 && cur.weather_code !== 48) adv.push(['rain', '지금 ' + wmo(cur.weather_code)[0] + ' 와요. 미끄러지지 않게 조심하세요']);
+  else if (rain) adv.push(['rain', hourLabel(rain.hour) + '쯤 비 소식이 있어요 (확률 ' + rain.pop + '%). 우비를 챙기세요']);
+  var maxWind = Math.max.apply(null, soon.map(function(x){ return x.wind || 0; }));
+  if (maxWind >= 7) adv.push(['wind', '바람이 강해요 (초속 ' + Math.round(maxWind) + 'm). 공이 바람에 밀릴 수 있어요']);
+  if (D.uv_index_max && D.uv_index_max[0] >= 6 && nowHour < 16) adv.push(['uv', '자외선이 강해요. 모자와 선크림을 챙기세요']);
+  if (tmax >= 30) adv.push(['hot', '더운 날이에요. 물을 자주 드세요']);
+  if (cur.apparent_temperature <= 5) adv.push(['cold', '쌀쌀해요. 겉옷을 챙기세요']);
+  if (D.temperature_2m_min.length > 1 && D.temperature_2m_min[1] <= tmin - 4) adv.push(['cold', '내일 아침은 기온이 크게 떨어져요']);
+  if (tmax - tmin >= 10) adv.push(['temp', '낮과 밤 기온 차가 커요. 건강 관리하세요']);
+  if (!adv.length) adv.push(['good', '운동하기 좋은 날씨예요']);
+  return { cur:cur, next:next, adv:adv, tmax:tmax, tmin:tmin, tom: D.temperature_2m_max.length > 1 ? { max:D.temperature_2m_max[1], min:D.temperature_2m_min[1], pop:D.precipitation_probability_max ? D.precipitation_probability_max[1] : null } : null, nowHour:nowHour };
+}
+function ago(ts){ var m = Math.round((Date.now() - ts) / 60000); return m < 1 ? '방금' : (m < 60 ? m + '분 전' : Math.round(m / 60) + '시간 전'); }
+function renderWx(){
+  var ico = $('#wxIcon'), tEl = $('#wxTemp'), line = $('#wxLine'), body = $('#wxBody'), c = wxCoords();
+  var have = wx && wx.data && (wxState === 'ok' || wxState === 'error' || wxState === 'idle') && c && (wx.here || wx.key === c.lat.toFixed(2) + ',' + c.lon.toFixed(2));
+  if (wxState === 'locating' || wxState === 'loading'){
+    ico.innerHTML = WXI.cloud; tEl.textContent = '날씨'; line.textContent = wxState === 'locating' ? '위치를 확인하는 중이에요…' : '날씨를 불러오는 중이에요…';
+    body.innerHTML = '<p class="empty-note">' + line.textContent + '</p>';
+  } else if (have){
+    var g = wxDigest(wx.data), w = wmo(g.cur.weather_code, g.nowHour);
+    ico.innerHTML = WXI[w[1]]; tEl.innerHTML = '<span class="num">' + Math.round(g.cur.temperature_2m) + '°</span> ' + w[0];
+    line.textContent = g.adv[0][1] + (wxState === 'error' ? ' · ' + ago(wx.at) + ' 정보' : '');
+    var v = (round.venue || '').trim();
+    body.innerHTML = '<div class="wx-now"><span class="wx-big">' + WXI[w[1]] + '</span><div><b class="num">' + Math.round(g.cur.temperature_2m) + '°</b><span>' + w[0] + ' · 체감 ' + Math.round(g.cur.apparent_temperature) + '°</span><span>바람 초속 ' + Math.round(g.cur.wind_speed_10m) + 'm · 오늘 ' + Math.round(g.tmin) + '° ~ ' + Math.round(g.tmax) + '°</span></div></div>'
+      + '<ul class="wx-adv">' + g.adv.map(function(a){ return '<li data-k="' + a[0] + '">' + esc(a[1]) + '</li>'; }).join('') + '</ul>'
+      + '<div class="hours" role="list" aria-label="시간별 날씨">' + g.next.map(function(x, i){ var ww = wmo(x.code, x.hour); return '<div class="hr" role="listitem"><span>' + (i === 0 ? '지금' : x.hour + '시') + '</span>' + WXI[ww[1]] + '<b class="num">' + Math.round(x.t) + '°</b><small class="num">' + (x.pop == null ? '' : x.pop + '%') + '</small></div>'; }).join('') + '</div>'
+      + '<p class="small muted">' + esc(wx.label) + ' · ' + ago(wx.at) + ' 업데이트' + (g.tom ? ' · 내일 ' + Math.round(g.tom.min) + '°~' + Math.round(g.tom.max) + '°' + (g.tom.pop != null ? ', 비 ' + g.tom.pop + '%' : '') : '') + (wxState === 'error' ? ' · 새 정보를 못 불러와 이전 정보를 보여 드려요' : '') + '</p>'
+      + (wx.here && v && !venueLoc[v] ? '<button id="wxSaveVenue" class="link-btn small" type="button">지금 ‘' + esc(v) + '’에 있어요 · 이 위치 저장</button>' : '');
+  } else if (wxState === 'error'){
+    ico.innerHTML = WXI.cloud; tEl.textContent = '날씨'; line.textContent = '날씨를 불러오지 못했어요. 누르면 다시 시도해요';
+    body.innerHTML = '<p class="empty-note">날씨를 불러오지 못했어요. 인터넷 연결을 확인한 뒤 아래 버튼을 눌러 주세요.</p>';
+  } else if (wxState === 'denied'){
+    ico.innerHTML = WXI.pin; tEl.textContent = '구장 날씨'; line.textContent = '위치 권한이 꺼져 있어요. 누르면 방법을 알려 드려요';
+    body.innerHTML = '<p class="empty-note">위치 권한이 꺼져 있어서 날씨를 찾을 수 없어요.<br>휴대폰 설정 → 브라우저(크롬 등) → 위치 → 허용으로 바꾼 뒤 다시 눌러 주세요.</p>';
+  } else {
+    ico.innerHTML = WXI.pin; tEl.textContent = '구장 날씨'; line.textContent = '누르면 지금 있는 곳의 날씨를 알려 드려요';
+    body.innerHTML = '<p class="empty-note">‘지금 있는 곳 날씨 보기’를 누르고 위치를 허용하면, 시간별 날씨와 비·바람·자외선 안내를 보여 드려요.<br>구장에서 한 번 저장해 두면 다음부터는 그 구장 날씨가 자동으로 나와요.</p>';
+  }
+  $('#wxTitle').textContent = (c && c.label && c.label !== '지금 있는 곳 근처' ? c.label : '구장') + ' 날씨';
+}
+$('#wxStrip').addEventListener('click', function(){
+  if (!wxCoords() || wxState === 'error') loadWx(true);
+  renderWx(); openSheet('#wxSheet');
+});
+$('#wxLocate').addEventListener('click', locate);
+$('#wxBody').addEventListener('click', function(e){
+  if (e.target.id !== 'wxSaveVenue' || !settings.loc) return;
+  var v = (round.venue || '').trim(); if (!v) return;
+  venueLoc[v] = { lat:settings.loc.lat, lon:settings.loc.lon }; store.set(K_LOC, venueLoc);
+  wx.label = v; wx.here = false; store.set(K_WX, wx); renderWx(); toast('‘' + v + '’ 위치를 저장했어요.\n다음부터 이 구장 날씨가 자동으로 나와요', 3200);
+});
+document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible' && wxCoords()) loadWx(false); });
 
 /* ---------- history ---------- */
 var statPick = null;
@@ -1719,10 +2009,12 @@ $('#nightBtn').addEventListener('click', function(){ settings.night = !settings.
 
 $('#installBtn').hidden = isStandalone();
 tickClock(); setInterval(tickClock, 15000);
+renderWx(); if (wxCoords()) loadWx(false);
 var start = (location.hash || '').slice(1);
 renderTop(); renderSetup();
 $('#setup').open = !round.sample && !hasScores(round);
 setTab(VIEWS[start] ? start : (store.get(K.tab, 'play')));
+checkLink();
 
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
