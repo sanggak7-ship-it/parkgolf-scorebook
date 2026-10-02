@@ -123,6 +123,11 @@ html.night .icon-btn .i-sun{display:block}
 .hr svg{width:2rem;height:2rem}
 .hr b{font-size:1.125rem;font-weight:700;color:var(--ink)}
 .hr small{color:var(--under);font-weight:700;min-height:1.1em}
+.kgate{position:fixed;inset:0;z-index:70;background:var(--bg);display:grid;place-items:center;padding:1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom,0px));overflow-y:auto}
+.kgate-in{max-width:24rem;width:100%;display:grid;gap:.875rem;justify-items:center;text-align:center}
+.kgate-in svg{border-radius:18px;box-shadow:var(--shadow-lg)}
+.kgate-in h2{font-size:1.375rem}
+.kgate-in p{color:var(--ink-2);font-size:1.0625rem;line-height:1.6}
 .viewer{position:fixed;inset:0;z-index:45;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .viewer-in{max-width:34rem;margin:0 auto;padding:calc(1rem + env(safe-area-inset-top,0px)) 1rem calc(7rem + env(safe-area-inset-bottom,0px));display:grid;gap:.875rem}
 .viewer-bar{position:fixed;left:0;right:0;bottom:0;z-index:46;padding:.75rem 1rem calc(.75rem + env(safe-area-inset-bottom,0px));background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--hair)}
@@ -673,6 +678,16 @@ tfoot .num{font-size:1.375rem;font-weight:700}
     <ol id="howto" class="howto"></ol>
   </div>
 </div>
+<div id="kakaoGate" class="kgate" hidden role="dialog" aria-modal="true" aria-labelledby="kgTitle">
+  <div class="kgate-in">
+    <svg width="64" height="64" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#21804F"/><path d="M14 27V9l10 4.2L14 17.4" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="17.5" cy="27" rx="6.5" ry="1.7" fill="#B8F0CF" opacity=".9"/></svg>
+    <h2 id="kgTitle">휴대폰 브라우저로 여는 중이에요</h2>
+    <p>카카오톡 안에서는 기록 저장과 홈 화면 추가가 안 돼서, 크롬(아이폰은 사파리)으로 열어 드려요. 새로 열린 화면에서 쓰시면 됩니다.</p>
+    <a id="kgOpen" class="btn pri big wide" href="#">브라우저로 열기</a>
+    <a class="btn wide" href="kakaotalk://inappbrowser/close">카카오톡으로 돌아가기</a>
+    <button id="kgStay" class="link-btn" type="button">그냥 여기서 볼게요</button>
+  </div>
+</div>
 <section id="viewer" class="viewer" hidden aria-label="받은 점수표">
   <div class="viewer-in">
     <div class="row between"><span class="label">링크로 받은 점수표</span><button id="vClose" class="pill-btn" type="button">닫기</button></div>
@@ -724,6 +739,15 @@ tfoot .num{font-size:1.375rem;font-weight:700}
 'use strict';
 var $ = function(s){ return document.querySelector(s); };
 var $$ = function(s, el){ return Array.prototype.slice.call((el||document).querySelectorAll(s)); };
+/* KakaoTalk's in-app browser can't keep records or add to the home screen: hand the page to the phone's own browser */
+var IN_KAKAO = /KAKAOTALK/i.test(navigator.userAgent || '');
+if (IN_KAKAO){
+  var kakaoOut = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href), stayHere = false;
+  try { stayHere = sessionStorage.getItem('pn_stay_kakao') === '1'; } catch(e){}
+  $('#kgOpen').href = kakaoOut;
+  $('#kgStay').addEventListener('click', function(){ try { sessionStorage.setItem('pn_stay_kakao', '1'); } catch(e){} $('#kakaoGate').hidden = true; });
+  if (!stayHere){ $('#kakaoGate').hidden = false; setTimeout(function(){ location.href = kakaoOut; }, 60); }
+}
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 var store = {
   get: function(k, d){ try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
