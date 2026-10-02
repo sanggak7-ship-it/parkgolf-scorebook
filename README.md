@@ -26,5 +26,6 @@ Settings → Pages → Branch `main` / `(root)` → Save.
 
 ## 함께 쓰는 공개 서비스·라이브러리
 - 날씨: [Open-Meteo](https://open-meteo.com/) (CC BY 4.0, 비상업 무료)
+- 지역 이름: [OpenStreetMap Nominatim](https://nominatim.org/) (© OpenStreetMap 기여자, 결과는 휴대폰에 저장해 재사용)
 - [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT) - QR 만들기
 - [jsQR](https://github.com/cozmo/jsQR) (Apache-2.0) - QR 읽기

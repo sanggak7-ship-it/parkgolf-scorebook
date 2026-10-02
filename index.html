@@ -108,13 +108,18 @@ html.night .icon-btn .i-sun{display:block}
 .btn.kakao{background:#FEE500;color:#191600;box-shadow:0 10px 22px -12px rgba(120,100,0,.6)}
 .btn.big{min-height:3.5rem;font-size:1.125rem}
 .qr-card{display:grid;gap:.875rem}
-.wx-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.75rem;width:100%;padding:.625rem .75rem .625rem .875rem;border-radius:var(--r);border:1px solid var(--hair);background:var(--surface);box-shadow:var(--shadow);text-align:left;color:var(--ink)}
-.wx-ico{color:var(--accent);display:grid}
-.wx-ico svg{width:2.5rem;height:2.5rem;display:block}
-.wx-main{min-width:0;display:grid;gap:.125rem}
-.wx-main b{font-size:1.0625rem;font-weight:800;line-height:1.2}
-.wx-main b .num{font-size:1.375rem;font-weight:700}
-.wx-main>span{font-size:.8125rem;color:var(--ink-2);line-height:1.35}
+.wx-strip{display:flex;align-items:center;gap:.5rem;width:100%;min-width:0;overflow:hidden;min-height:3.25rem;padding:.375rem .625rem .375rem .75rem;border-radius:var(--r);border:1px solid var(--hair);background:var(--surface);box-shadow:var(--shadow);text-align:left;color:var(--ink)}
+.wx-ico{color:var(--accent);display:grid;flex:none}
+.wx-ico svg{width:2rem;height:2rem;display:block}
+.wx-temp{font-size:1rem;font-weight:800;white-space:nowrap;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.wx-temp .num{font-size:1.375rem;font-weight:700;margin-right:.125rem}
+.wx-r{color:var(--under)}
+html.big .wx-go{display:none}
+html.big .wx-ico svg{width:1.75rem;height:1.75rem}
+html.big .wx-strip{gap:.375rem}
+.wx-r svg{width:1em;height:1em;vertical-align:-.12em;margin-right:.125rem}
+.wx-place{flex:1 1 auto;min-width:3.5em;text-align:right;font-size:.875rem;font-weight:700;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-place svg{width:.875rem;height:.875rem;vertical-align:-.1em;margin-right:.125rem}
 .wx-go{color:var(--ink-3)}
 .wx-now{display:flex;align-items:center;gap:1rem}
 .wx-big svg{width:4.5rem;height:4.5rem;display:block}
@@ -164,7 +169,7 @@ html.night .icon-btn .i-sun{display:block}
 .pill-btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
 main{max-width:34rem;margin:0 auto;padding-inline:1rem;padding-block:1rem calc(7.25rem + env(safe-area-inset-bottom,0px))}
-.view{display:grid;gap:.875rem}
+.view{display:grid;grid-template-columns:minmax(0,1fr);gap:.875rem}
 .card{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:1.125rem;box-shadow:var(--shadow);min-width:0}
 .stack{display:grid;gap:.75rem}
 .row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
@@ -195,11 +200,12 @@ main{max-width:34rem;margin:0 auto;padding-inline:1rem;padding-block:1rem calc(7
 
 /* fields */
 .field{display:grid;gap:.375rem;min-width:0}
-.inp{width:100%;min-height:3rem;padding:.5rem .875rem;border:1.5px solid transparent;border-radius:var(--r-sm);background:var(--surface-2);font-size:1.0625rem;transition:border-color .15s,background-color .15s}
+.inp{width:100%;min-width:0;min-height:3rem;padding:.5rem .875rem;border:1.5px solid transparent;border-radius:var(--r-sm);background:var(--surface-2);font-size:1.0625rem;transition:border-color .15s,background-color .15s}
 .inp::placeholder{color:var(--ink-3)}
 .inp:focus{border-color:var(--accent);background:var(--surface);outline:none}
 textarea.inp{min-height:4.5rem;resize:vertical;line-height:1.45}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:.625rem}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.625rem}
+.two.fit{grid-template-columns:repeat(auto-fit,minmax(10.5rem,1fr))}
 .venue-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
 .pin{position:relative}
 .pin .inp{padding-left:2.75rem}
@@ -458,7 +464,8 @@ tfoot .num{font-size:1.375rem;font-weight:700}
 
     <button id="wxStrip" class="wx-strip" type="button" aria-haspopup="dialog">
       <span id="wxIcon" class="wx-ico"></span>
-      <span class="wx-main"><b id="wxTemp">구장 날씨</b><span id="wxLine"></span></span>
+      <b id="wxTemp" class="wx-temp">구장 날씨</b>
+      <span id="wxPlace" class="wx-place"></span>
       <svg class="wx-go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </button>
 
@@ -501,7 +508,7 @@ tfoot .num{font-size:1.375rem;font-weight:700}
         <svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </summary>
       <div class="setup-body">
-        <div class="two">
+        <div class="two fit">
           <div class="field"><label class="label" for="fDate">날짜</label><input id="fDate" class="inp" type="date"></div>
           <div class="field"><label class="label" for="fGroup">조(팀) 이름</label><input id="fGroup" class="inp" type="text" placeholder="예: 3조" autocomplete="off"></div>
         </div>
@@ -719,7 +726,7 @@ tfoot .num{font-size:1.375rem;font-weight:700}
       <button id="wxLocate" class="btn pri full" type="button">지금 있는 곳 날씨 보기</button>
       <a class="btn full" href="https://map.naver.com/p/search/%ED%8C%8C%ED%81%AC%EA%B3%A8%ED%94%84%EC%9E%A5" target="_blank" rel="noopener">주변 파크골프장 지도 보기</a>
     </div>
-    <p class="small muted">날씨 정보: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (기상청 등 예보 자료)</p>
+    <p class="small muted">날씨 정보: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (기상청 등 예보 자료) · 지역 이름: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
   </div>
 </div>
 <div id="qrSheet" class="sheet" hidden>
@@ -1771,7 +1778,7 @@ function loadWx(force){
   wxState = 'loading'; renderWx();
   fetch(wxUrl(c)).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(d){
     if (!d || !d.current || !d.hourly || !d.daily) throw new Error('shape');
-    wx = { key:key, at:Date.now(), data:d, label:c.label }; store.set(K_WX, wx); wxState = 'ok'; renderWx();
+    wx = { key:key, at:Date.now(), data:d, label:c.label, lat:c.lat, lon:c.lon }; store.set(K_WX, wx); wxState = 'ok'; renderWx();
   }).catch(function(){ wxState = 'error'; renderWx(); });
 }
 function locate(){
@@ -1787,7 +1794,7 @@ function loadWxHere(){
   wxState = 'loading'; renderWx();
   fetch(wxUrl(c)).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(d){
     if (!d || !d.current || !d.hourly || !d.daily) throw new Error('shape');
-    wx = { key:key, at:Date.now(), data:d, label:c.label, here:true }; store.set(K_WX, wx); wxState = 'ok'; renderWx();
+    wx = { key:key, at:Date.now(), data:d, label:c.label, here:true, lat:c.lat, lon:c.lon }; store.set(K_WX, wx); wxState = 'ok'; renderWx();
   }).catch(function(){ wxState = 'error'; renderWx(); });
 }
 function wxDigest(d){
@@ -1811,33 +1818,66 @@ function wxDigest(d){
   return { cur:cur, next:next, adv:adv, tmax:tmax, tmin:tmin, tom: D.temperature_2m_max.length > 1 ? { max:D.temperature_2m_max[1], min:D.temperature_2m_min[1], pop:D.precipitation_probability_max ? D.precipitation_probability_max[1] : null } : null, nowHour:nowHour };
 }
 function ago(ts){ var m = Math.round((Date.now() - ts) / 60000); return m < 1 ? '방금' : (m < 60 ? m + '분 전' : Math.round(m / 60) + '시간 전'); }
+/* short place name (e.g. "대구 중구") from OpenStreetMap, looked up once per ~1km and cached */
+var K_PLACE = 'pgsb_places', places = store.get(K_PLACE, {}), placeAsk = {};
+var PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>';
+function placeKey(lat, lon){ return lat.toFixed(2) + ',' + lon.toFixed(2); }
+function shortPlace(a){
+  a = a || {};
+  var city = a.city || '', dist = a.borough || a.city_district || '';
+  var m = city.match(/^(.+?)(특별시|광역시|특별자치시)$/) || (a.province || '').match(/^(.+?)(특별시|광역시|특별자치시)$/);
+  if (m) return (m[1] + ' ' + (dist || a.county || '')).trim();
+  if (city) return city;
+  if (a.county) return a.county;
+  return a.town || a.province || a.state || '';
+}
+function placeOf(lat, lon){
+  if (lat == null || lon == null) return '';
+  var k = placeKey(lat, lon);
+  if (places[k] != null) return places[k];
+  if (!placeAsk[k]){
+    placeAsk[k] = 1;
+    fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&accept-language=ko&lat=' + lat.toFixed(4) + '&lon=' + lon.toFixed(4))
+      .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d){ places[k] = shortPlace(d && d.address); store.set(K_PLACE, places); renderWx(); })
+      .catch(function(){});
+  }
+  return '';
+}
 function renderWx(){
-  var ico = $('#wxIcon'), tEl = $('#wxTemp'), line = $('#wxLine'), body = $('#wxBody'), c = wxCoords();
+  var ico = $('#wxIcon'), tEl = $('#wxTemp'), place = $('#wxPlace'), body = $('#wxBody'), c = wxCoords();
   var have = wx && wx.data && (wxState === 'ok' || wxState === 'error' || wxState === 'idle') && c && (wx.here || wx.key === c.lat.toFixed(2) + ',' + c.lon.toFixed(2));
+  var pname = have ? placeOf(wx.lat, wx.lon) : '';
   if (wxState === 'locating' || wxState === 'loading'){
-    ico.innerHTML = WXI.cloud; tEl.textContent = '날씨'; line.textContent = wxState === 'locating' ? '위치를 확인하는 중이에요…' : '날씨를 불러오는 중이에요…';
-    body.innerHTML = '<p class="empty-note">' + line.textContent + '</p>';
+    ico.innerHTML = WXI.cloud; tEl.textContent = '날씨'; place.textContent = wxState === 'locating' ? '위치 확인 중…' : '불러오는 중…';
+    body.innerHTML = '<p class="empty-note">' + (wxState === 'locating' ? '위치를 확인하는 중이에요…' : '날씨를 불러오는 중이에요…') + '</p>';
   } else if (have){
     var g = wxDigest(wx.data), w = wmo(g.cur.weather_code, g.nowHour);
-    ico.innerHTML = WXI[w[1]]; tEl.innerHTML = '<span class="num">' + Math.round(g.cur.temperature_2m) + '°</span> ' + w[0];
-    line.textContent = g.adv[0][1] + (wxState === 'error' ? ' · ' + ago(wx.at) + ' 정보' : '');
+    // rain soon replaces the sky word (the icon already shows the sky); keeps the strip one short line
+    var wet = g.cur.weather_code >= 51 && g.cur.weather_code !== 45 && g.cur.weather_code !== 48;
+    var soonRain = g.next.slice(0, 6).filter(function(x){ return x.pop != null && x.pop >= 50; })[0];
+    var UMB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 18 0zM12 12v6.5a2 2 0 0 1-4 0"/></svg>';
+    ico.innerHTML = WXI[w[1]];
+    tEl.innerHTML = '<span class="num">' + Math.round(g.cur.temperature_2m) + '°</span>' + (wet ? '<span class="wx-r">' + UMB + '지금 ' + w[0] + '</span>' : (soonRain ? '<span class="wx-r">' + UMB + hourLabel(soonRain.hour) + ' 비</span>' : w[0]));
+    place.innerHTML = pname ? PIN + esc(pname) : (wxState === 'error' ? esc(ago(wx.at)) + ' 정보' : '');
     var v = (round.venue || '').trim();
     body.innerHTML = '<div class="wx-now"><span class="wx-big">' + WXI[w[1]] + '</span><div><b class="num">' + Math.round(g.cur.temperature_2m) + '°</b><span>' + w[0] + ' · 체감 ' + Math.round(g.cur.apparent_temperature) + '°</span><span>바람 초속 ' + Math.round(g.cur.wind_speed_10m) + 'm · 오늘 ' + Math.round(g.tmin) + '° ~ ' + Math.round(g.tmax) + '°</span></div></div>'
       + '<ul class="wx-adv">' + g.adv.map(function(a){ return '<li data-k="' + a[0] + '">' + esc(a[1]) + '</li>'; }).join('') + '</ul>'
       + '<div class="hours" role="list" aria-label="시간별 날씨">' + g.next.map(function(x, i){ var ww = wmo(x.code, x.hour); return '<div class="hr" role="listitem"><span>' + (i === 0 ? '지금' : x.hour + '시') + '</span>' + WXI[ww[1]] + '<b class="num">' + Math.round(x.t) + '°</b><small class="num">' + (x.pop == null ? '' : x.pop + '%') + '</small></div>'; }).join('') + '</div>'
-      + '<p class="small muted">' + esc(wx.label) + ' · ' + ago(wx.at) + ' 업데이트' + (g.tom ? ' · 내일 ' + Math.round(g.tom.min) + '°~' + Math.round(g.tom.max) + '°' + (g.tom.pop != null ? ', 비 ' + g.tom.pop + '%' : '') : '') + (wxState === 'error' ? ' · 새 정보를 못 불러와 이전 정보를 보여 드려요' : '') + '</p>'
+      + '<p class="small muted">' + esc([pname, wx.label !== '지금 있는 곳 근처' ? wx.label : ''].filter(Boolean).join(' · ') || '지금 있는 곳') + ' · ' + ago(wx.at) + ' 업데이트' + (g.tom ? ' · 내일 ' + Math.round(g.tom.min) + '°~' + Math.round(g.tom.max) + '°' + (g.tom.pop != null ? ', 비 ' + g.tom.pop + '%' : '') : '') + (wxState === 'error' ? ' · 새 정보를 못 불러와 이전 정보를 보여 드려요' : '') + '</p>'
       + (wx.here && v && !venueLoc[v] ? '<button id="wxSaveVenue" class="link-btn small" type="button">지금 ‘' + esc(v) + '’에 있어요 · 이 위치 저장</button>' : '');
   } else if (wxState === 'error'){
-    ico.innerHTML = WXI.cloud; tEl.textContent = '날씨'; line.textContent = '날씨를 불러오지 못했어요. 누르면 다시 시도해요';
+    ico.innerHTML = WXI.cloud; tEl.textContent = '날씨'; place.textContent = '못 불러왔어요 · 다시 시도';
     body.innerHTML = '<p class="empty-note">날씨를 불러오지 못했어요. 인터넷 연결을 확인한 뒤 아래 버튼을 눌러 주세요.</p>';
   } else if (wxState === 'denied'){
-    ico.innerHTML = WXI.pin; tEl.textContent = '구장 날씨'; line.textContent = '위치 권한이 꺼져 있어요. 누르면 방법을 알려 드려요';
+    ico.innerHTML = WXI.pin; tEl.textContent = '날씨'; place.textContent = '위치 권한이 꺼져 있어요';
     body.innerHTML = '<p class="empty-note">위치 권한이 꺼져 있어서 날씨를 찾을 수 없어요.<br>휴대폰 설정 → 브라우저(크롬 등) → 위치 → 허용으로 바꾼 뒤 다시 눌러 주세요.</p>';
   } else {
-    ico.innerHTML = WXI.pin; tEl.textContent = '구장 날씨'; line.textContent = '누르면 지금 있는 곳의 날씨를 알려 드려요';
+    ico.innerHTML = WXI.pin; tEl.textContent = '날씨'; place.textContent = '누르면 지금 날씨 보기';
     body.innerHTML = '<p class="empty-note">‘지금 있는 곳 날씨 보기’를 누르고 위치를 허용하면, 시간별 날씨와 비·바람·자외선 안내를 보여 드려요.<br>구장에서 한 번 저장해 두면 다음부터는 그 구장 날씨가 자동으로 나와요.</p>';
   }
-  $('#wxTitle').textContent = (c && c.label && c.label !== '지금 있는 곳 근처' ? c.label : '구장') + ' 날씨';
+  var titleBase = (c && c.label && c.label !== '지금 있는 곳 근처') ? c.label : (pname || '지금 있는 곳');
+  $('#wxTitle').textContent = titleBase + ' 날씨';
 }
 $('#wxStrip').addEventListener('click', function(){
   if (!wxCoords() || wxState === 'error') loadWx(true);
